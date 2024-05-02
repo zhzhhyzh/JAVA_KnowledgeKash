@@ -38,7 +38,7 @@ public class Interpreter {
                     System.out.println(DIVIDER);
                     System.out.println("1. Register");
                     System.out.println("2. Login");
-                    System.out.println("3. Exit");
+                    System.out.println("0. Exit");
                     System.out.print("Enter your choice: ");
 
                     do {
@@ -58,7 +58,7 @@ public class Interpreter {
 
                                     menuError = login(scanner, loggedIn, adminFlag, username);
                                     break;
-                                case 3:
+                                case 0:
                                     errorFlag = false;
                                     System.out.println("Exiting...");
                                     menuError = false;
@@ -104,7 +104,7 @@ public class Interpreter {
                                             break;
                                         case 2:
                                             errorFlag = false;
-                                            callRewardsCatalogue(rewardCatalogue);
+                                            callRewardsCatalogue(rewardCatalogue, scanner);
                                             break;
                                         case 3:
                                             errorFlag = false;
@@ -210,6 +210,8 @@ public class Interpreter {
                 PassINusername[0] = tempSave;
 
             }
+            Policy.applyPolicy(username);
+
             clearScreen();
             loggedIn[0] = true;
             System.out.println("Login successful! Welcome, " + tempSave + "!");
@@ -289,8 +291,7 @@ public class Interpreter {
         System.out.flush();
     }
 
-    public static void callRewardsCatalogue(RewardCatalogue[] rewardCatalogue) {
-        Scanner scanner = new Scanner(System.in);
+    public static void callRewardsCatalogue(RewardCatalogue[] rewardCatalogue, Scanner scanner) {
         boolean errorFlag = false;
         boolean running = true;
         do {
@@ -463,6 +464,7 @@ public class Interpreter {
             lastRecord = Admin.listUsers(page);
             System.out.println("1. Next Page");
             System.out.print(page == 1 ? "" : "2. Previous Page\n");
+            System.out.print(page == 1 ? "2. Update Policy\n" : "3. Update Policy\n");
             System.out.println("0. Back");
             System.out.print("Enter your choice: ");
             do {
@@ -486,10 +488,16 @@ public class Interpreter {
                             page--;
                             errorFlag = false;
                         } else {
-                            System.out.println("Invalid choice. Please try again.");
-                            errorFlag = true;
+                            managePolicy(scanner);
                         }
                         break;
+                    case 3:
+                        if (page > 1) {
+                            managePolicy(scanner);
+                            errorFlag = false;
+                        } else {
+                            errorFlag = true;
+                        }
                     case 0:
                         errorFlag = false;
                         page = 0;
@@ -863,44 +871,73 @@ public class Interpreter {
         System.out.println(DIVIDER);
         System.out.println("KnowledgeKash Menu > Answer Question");
         System.out.println(DIVIDER);
-        System.out.println("1. Question's answer by Selection");     
+        System.out.println("1. Question's answer by Selection");
         System.out.println("2. Question's answer by Boolean");
-        System.out.println("3. Question's answer by String");      
+        System.out.println("3. Question's answer by String");
         System.out.print("Choose your selection: ");
-         do {
-                try {
-                    int choice = scanner.nextInt();
-                    switch (choice) {
-                        case 1:
-                            QuestionSelect qs = new QuestionSelect();
-                            qs.createQuestion();
-                            errorFlag = false;
-                            break;
-                        case 2:
-                            QuestionBoolean qb = new QuestionBoolean();
-                            qb.createQuestion();
-                            errorFlag = false;
-                            break;
-                        case 3:
-                            QuestionString qStr = new QuestionString();
-                            qStr.createQuestion();
-                            errorFlag = false;
-                            break;
-                        case 0:
-                            errorFlag = false;
-                            break;
-                        default:
-                            System.out.println("Invalid choice. Please try again.");
-                            errorFlag = true;
-                            break;
-                    }
-                } catch (InputMismatchException ex) {
-                    System.out.println("Please enter valid input:");
-                    scanner.nextLine();
-                    errorFlag = true;
+        do {
+            try {
+                int choice = scanner.nextInt();
+                switch (choice) {
+                    case 1:
+                        QuestionSelect qs = new QuestionSelect();
+                        int questionCountS = qs.getTotalCount();
+                        questionCountS = (int) (Math.random() * questionCountS + 1);
+                        qs.answerQuestion(questionCountS);
+                        errorFlag = false;
+                        break;
+                    case 2:
+                        QuestionBoolean qb = new QuestionBoolean();
+                        int questionCountBoo = qb.getTotalCount();
+                        questionCountBoo = (int) (Math.random() * questionCountBoo + 101);
+                        qb.answerQuestion(questionCountBoo);
+                        errorFlag = false;
+                        break;
+                    case 3:
+                        QuestionString qStr = new QuestionString();
+                        int questionCountStr = qStr.getTotalCount();
+                        questionCountStr = (int) (Math.random() * questionCountStr + 201);
+                        qStr.answerQuestion(questionCountStr);
+                        errorFlag = false;
+                        break;
+                    case 0:
+                        errorFlag = false;
+                        break;
+                    default:
+                        System.out.println("Invalid choice. Please try again.");
+                        errorFlag = true;
+                        break;
                 }
-            } while (errorFlag);
+            } catch (InputMismatchException ex) {
+                System.out.println("Please enter valid input:");
+                scanner.nextLine();
+                errorFlag = true;
+            }
+        } while (errorFlag);
 
     }
 
+    public static void managePolicy(Scanner scanner) {
+        System.out.println("Current Policy Day Count:" + Policy.getDayCount());
+        System.out.print("Enter numbers of day want to change OR [0] for cancel:");
+        int policyChoice = 0;
+        boolean policyError = false;
+        do {
+            try {
+                policyChoice = scanner.nextInt();
+                if (policyChoice < 0) {
+                    policyError = true;
+                } else {
+                    policyError = false;
+                }
+            } catch (InputMismatchException ex) {
+                policyError = true;
+                System.out.println("Invalid input. Please enter again:");
+            }
+        } while (policyError);
+
+        if (policyChoice > 0) {
+            Policy.setDayCount(policyChoice);
+        }
+    }
 }
