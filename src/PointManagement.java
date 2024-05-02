@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.LocalDate;
 import java.util.Date;
 
 //Point Management Module
@@ -15,7 +16,7 @@ public class PointManagement {
     private int totalRedeemedPoints;
     private int availablePoints;
     private int totalExpiredPoints;
-    private Date lastEarningDate;
+    private LocalDate lastEarningDate;
     private static final String DELIMITER = ",";
     private static final String USER_FILE_PATH = "user.txt";
 
@@ -28,10 +29,10 @@ public class PointManagement {
         this.totalRedeemedPoints = totalRedeemedPoints;
         calAvailablePoint(totalEarnedPoints, totalRedeemedPoints, totalExpiredPoints);
         this.totalExpiredPoints = totalExpiredPoints;
-        this.lastEarningDate = new Date();
+        this.lastEarningDate = LocalDate.now();
     }
 
-    public int calAvailablePoint(int totalEarnedPoints, int totalRedeemedPoints, int totalExpiredPoints) {
+    private int calAvailablePoint(int totalEarnedPoints, int totalRedeemedPoints, int totalExpiredPoints) {
         int availablePointss = totalEarnedPoints - totalRedeemedPoints - totalExpiredPoints;
         this.availablePoints = availablePointss;
         return availablePoints;
@@ -75,6 +76,7 @@ public class PointManagement {
                     parts[9] = lastEarningDate.toString();
                     //Rewrite the line
                     pw.println(String.join(",", parts));
+                    calAvailablePoint(earnPoints, redeemedPoints, expiredPoints);
                 } else {
                     // If the line does not contain the username, just copy it to the temporary file
                     pw.println(line);
@@ -92,25 +94,24 @@ public class PointManagement {
             if (!tempFile.renameTo(originalFile)) {
                 System.err.println("Error: Could not rename temporary file");
             }
+
         } catch (IOException e) {
             System.err.println("Error reading user data from file: " + e.getMessage());
         }
     }
 
-    public void IncreasePoints(int points) {
+    public void increasePoints(int points) {
         totalEarnedPoints += points;
-        availablePoints += points;
-        lastEarningDate = new Date();
-        updatePoints("user.txt");
+        lastEarningDate = LocalDate.now();
+        updatePoints(USER_FILE_PATH);
 //        return availablePoints;
     }
 
-    public int DecreasePoints(int points) {
+    public void decreasePoints(int points) {
         totalRedeemedPoints += points;
-        availablePoints -= points;
-        lastEarningDate = new Date();
-        updatePoints("user.txt");
-        return availablePoints;
+        lastEarningDate = LocalDate.now();
+        updatePoints(USER_FILE_PATH);
+//        return availablePoints;
     }
 
     public int pointsExpired(int points) {

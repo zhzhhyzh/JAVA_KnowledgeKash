@@ -20,8 +20,6 @@ public class RewardRedemption {
         }
     }
 
-    public static void listProducts() {
-        catalogue.listProducts();
-    }
+    
 
 }

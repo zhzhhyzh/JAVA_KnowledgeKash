@@ -19,8 +19,18 @@ public class QuestionBoolean extends QuestionRepository {
             while ((line = reader.readLine()) != null) {
                 String[] userData = line.split(",", -1);
 
-                if (userData.length > 0 && Integer.parseInt(userData[0]) < 201 && Integer.parseInt(userData[0]) > tempQuestionId) {
-                    tempQuestionId = Integer.parseInt(userData[0]);
+               if (userData.length > 0 && !userData[0].trim().isEmpty()
+                        && Integer.parseInt(userData[0].trim()) < 201
+                        && Integer.parseInt(userData[0].trim()) > tempQuestionId) {
+                    int holdTempQuestionId = tempQuestionId + 1;
+                    int runningNo = Integer.parseInt(userData[0].trim());
+                    if (holdTempQuestionId == runningNo) {
+                        tempQuestionId = runningNo;
+                    } else {
+                        tempQuestionId = holdTempQuestionId;
+                        break;
+                    }
+
                 }
             }
 
@@ -225,11 +235,11 @@ public class QuestionBoolean extends QuestionRepository {
             }
 
             if (!updated) {
-                System.err.println("Username not found.");
+                System.err.println("Question not found.");
                 return false;
             }
         } catch (IOException e) {
-            System.err.println("Error updating user data: " + e.getMessage());
+            System.err.println("Error updating question data: " + e.getMessage());
             return false;
         }
 
@@ -253,7 +263,7 @@ public class QuestionBoolean extends QuestionRepository {
                 return false;
             }
 
-            System.out.println("Account updated.");
+            System.out.println("Question updated.");
             return true;
         } catch (Exception ex) {
             System.err.println("Error replacing files: " + ex.getMessage());
