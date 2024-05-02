@@ -4,13 +4,15 @@ import java.util.ArrayList;
 
 public class RewardCatalogue {
 
+    private static final String DELIMITER = ",";
+    private static final String DIVIDER = "-----------------------------------------------------------------------------------------";
     private static final String PROD_FILE_PATH = "product.txt";
     private static ArrayList<Integer> rewardId = new ArrayList<>();
     private static ArrayList<String> name = new ArrayList<>();
     private static ArrayList<String> description = new ArrayList<>();
     private static ArrayList<Integer> pointCost = new ArrayList<>();
     private static ArrayList<Integer> stock = new ArrayList<>();
-    private static int itemCount = 3; //HAVE INITIAL 3 PRODUCT ADDED
+    private static int itemCount ;
 
     public static String tempName;
     public static String tempDescription;
@@ -26,11 +28,11 @@ public class RewardCatalogue {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] data = line.split(",");
-                int id = Integer.parseInt(data[0]);
+                int id = Integer.parseInt(data[0].trim());
                 String prodName = data[1];
                 String prodDesc = data[2];
-                int cost = Integer.parseInt(data[3]);
-                int prodStock = Integer.parseInt(data[4]);
+                int cost = Integer.parseInt(data[3].trim());
+                int prodStock = Integer.parseInt(data[4].trim());
                 rewardId.add(id);
                 name.add(prodName);
                 description.add(prodDesc);
@@ -44,13 +46,13 @@ public class RewardCatalogue {
     }
 
     public static void addProduct(String productName, String productDescription, int cost, int productStock) {
-        int id = 1000 + itemCount + 1;
+        int id = getRunningRewardId() + 1  ;
         rewardId.add(id);
         name.add(productName);
         description.add(productDescription);
         pointCost.add(cost);
         stock.add(productStock);
-        itemCount++;
+        
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(PROD_FILE_PATH, true))) {
             writer.write(String.format("%d,%s,%s,%d,%d%n", id, productName, productDescription, cost, productStock));
         } catch (IOException e) {
@@ -60,55 +62,103 @@ public class RewardCatalogue {
     }
 
     public static void updateProduct(int productId, String newName, String newDescription, int newPointCost, int newStock) {
-        int index = findProductIndex(productId);
-        if (index != -1) {
-            name.set(index, newName);
-            description.set(index, newDescription);
-            pointCost.set(index, newPointCost);
-            stock.set(index, newStock);
-            // Update the product in the file
-            updateProductInFile(index);
-            System.out.println("Product updated successfully.");
-        } else {
-            System.out.println("Product not found.");
-        }
-    }
+        try (BufferedReader reader = new BufferedReader(new FileReader(PROD_FILE_PATH)); BufferedWriter writer = new BufferedWriter(new FileWriter(PROD_FILE_PATH + ".tmp"))) {
 
-    public static void deleteProduct(int productId) {
-        int index = findProductIndex(productId);
-        if (index != -1) {
-            rewardId.remove(index);
-            name.remove(index);
-            description.remove(index);
-            pointCost.remove(index);
-            stock.remove(index);
-            itemCount--;
-            // Update the file after removing the product
-            updateFileAfterDeletion();
-            System.out.println("Product deleted successfully.");
-        } else {
-            System.out.println("Product not found.");
-        }
-    }
+            String line;
+            boolean updated = false;
+            while ((line = reader.readLine()) != null) {
+                String[] userData = line.split(DELIMITER);
+                if (userData.length >= 1) {
+                    String productIdStr = String.valueOf(productId);
+                    String storedProductId = userData[0];
+                    String pointCostStr = String.valueOf(newPointCost);
+                    String stockStr = String.valueOf(newStock);
+                    if (productIdStr.equals(storedProductId)) {
+                        // Construct the updated line
+                        String updatedLine = productIdStr + DELIMITER + newName + DELIMITER
+                                + newDescription + DELIMITER + pointCostStr + DELIMITER + stockStr;
+                        // Write the updated line to the temporary file
+                        writer.write(updatedLine);
+                        writer.newLine();
+                        updated = true;
+                    } else {
+                        // Write the unchanged line to the temporary file
+                        writer.write(line);
+                        writer.newLine();
+                    }
+                }
+            }
 
-    private static void updateProductInFile(int index) {
-        try (RandomAccessFile file = new RandomAccessFile(PROD_FILE_PATH, "rw")) {
-            file.seek(index * 30); // Assuming each line in the file occupies 30 bytes
-            file.writeBytes(String.format("%d,%s,%s,%d,%d%n", rewardId.get(index), name.get(index),
-                    description.get(index), pointCost.get(index), stock.get(index)));
-        } catch (IOException e) {
-            System.err.println("Error updating product in file: " + e.getMessage());
-        }
-    }
-
-    private static void updateFileAfterDeletion() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(PROD_FILE_PATH))) {
-            for (int i = 0; i < itemCount; i++) {
-                writer.write(String.format("%d,%s,%s,%d,%d%n", rewardId.get(i), name.get(i),
-                        description.get(i), pointCost.get(i), stock.get(i)));
+            if (!updated) {
+                System.err.println("rewardId not found.");
             }
         } catch (IOException e) {
-            System.err.println("Error updating file after deletion: " + e.getMessage());
+            System.err.println("Error updating user data: " + e.getMessage());
+        }
+
+        // Replace the original file with the temporary file
+        try {
+            File originalFile = new File(PROD_FILE_PATH);
+            File tempFile = new File(PROD_FILE_PATH + ".tmp");
+
+            if (!tempFile.exists() || !tempFile.canRead()) {
+                System.err.println("Temporary file is missing or cannot be read.");
+            }
+
+            if (!originalFile.delete()) {
+                System.err.println("Failed to delete the original file.");
+            }
+
+            if (!tempFile.renameTo(originalFile)) {
+                System.err.println("Failed to replace the original file with the temporary file.");
+            }
+
+            System.out.println("Product updated.");
+        } catch (Exception ex) {
+            System.err.println("Error replacing files: " + ex.getMessage());
+        }
+
+    }
+
+    public static void deleteProduct(int rewardId) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(PROD_FILE_PATH)); BufferedWriter writer = new BufferedWriter(new FileWriter(PROD_FILE_PATH + ".tmp"))) {
+            String line;
+            boolean found = false;
+
+            while ((line = reader.readLine()) != null) {
+                String[] userData = line.split(",", -1);
+
+                if (userData.length > 0 && Integer.parseInt(userData[0]) == rewardId) {
+                    found = true;
+                    // Skip writing this line to the temporary file (effectively deleting it)
+                } else {
+                    // Write the line to the temporary file
+                    writer.write(line);
+                    writer.newLine();
+                }
+
+            }
+            if (!found) {
+                System.out.println("Question with ID " + rewardId + " not found.");
+            } else {
+                System.out.println("Question with ID " + rewardId + " deleted successfully.");
+            }
+        } catch (IOException e) {
+            System.err.println("Error reading question file: " + e.getMessage());
+        }
+        try {
+            File originalFile = new File(PROD_FILE_PATH);
+            File tempFile = new File(PROD_FILE_PATH + ".tmp");
+
+            if (tempFile.exists() && tempFile.canRead() && originalFile.delete()) {
+                if (!tempFile.renameTo(originalFile)) {
+                    System.err.println("Failed to replace the original file with the temporary file.");
+                }
+            } else {
+                System.err.println("Temporary file is missing or cannot be read, or failed to delete the original file.");
+            }
+        } catch (Exception ex) {
+            System.err.println("Error replacing files: " + ex.getMessage());
         }
     }
 
@@ -128,24 +178,26 @@ public class RewardCatalogue {
         }
 
         // Print table header
+        System.out.println(DIVIDER);
         System.out.printf("%-12s | %-20s | %-30s | %-10s | %-6s%n",
                 "Product ID", "Name", "Description", "Point Cost", "Stock");
-        System.out.println("------------------------------------------------------------------------");
+        System.out.println(DIVIDER);
 
         try (BufferedReader reader = new BufferedReader(new FileReader(PROD_FILE_PATH))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] data = line.split(",");
-                int id = Integer.parseInt(data[0]);
+                int id = Integer.parseInt(data[0].trim());
                 String prodName = data[1];
                 String prodDesc = data[2];
-                int cost = Integer.parseInt(data[3]);
-                int prodStock = Integer.parseInt(data[4]);
+                int cost = Integer.parseInt(data[3].trim());
+                int prodStock = Integer.parseInt(data[4].trim());
                 System.out.printf("%-12d | %-20s | %-30s | %-10d | %-6d%n", id, prodName, prodDesc, cost, prodStock);
             }
         } catch (IOException e) {
             System.err.println("Error reading products from file: " + e.getMessage());
         }
+        System.out.println(DIVIDER);
     }
 
     public static void setTempName(String tempName) {
@@ -190,8 +242,8 @@ public class RewardCatalogue {
                 if (id == productId) {
                     setTempName(data[1]);
                     setTempDescription(data[2]);
-                    setTempPoint(Integer.parseInt(data[3]));
-                    setTempStock(Integer.parseInt(data[4]));
+                    setTempPoint(Integer.parseInt(data[3].trim()));
+                    setTempStock(Integer.parseInt(data[4].trim()));
 
                     return "Product ID: " + id + "\nName: " + data[1] + "\nDescription: " + data[2] + "\nPoint Cost: " + data[3] + "\nStock: " + data[4];
                 }
@@ -236,5 +288,24 @@ public class RewardCatalogue {
 
     public boolean productExists(int productId) {
         return findProductIndex(productId) != -1;
+    }
+    
+     private static int getRunningRewardId() {
+        int tempRewardId = 1001;
+        try (BufferedReader reader = new BufferedReader(new FileReader(PROD_FILE_PATH))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] userData = line.split(",", -1);
+
+                if (userData.length > 0 && Integer.parseInt(userData[0]) > tempRewardId) {
+                    tempRewardId = Integer.parseInt(userData[0]);
+                }
+            }
+
+        } catch (IOException e) {
+            System.err.println("Error reading question file: " + e.getMessage());
+            return -1;
+        }
+        return tempRewardId;
     }
 }

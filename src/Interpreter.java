@@ -24,6 +24,7 @@ public class Interpreter {
         Client[] realClient = new Client[1];
         Admin realAdmin;
         RewardCatalogue[] rewardCatalogue = new RewardCatalogue[1];
+        rewardCatalogue[0] = new RewardCatalogue();
 
         if (checkFileInd) {
             Scanner scanner = new Scanner(System.in);
@@ -151,7 +152,7 @@ public class Interpreter {
                                     switch (choice) {
                                         case 1:
                                             errorFlag = false;
-                                            callAnswerQuestion(scanner);
+                                            callAnswerQuestion(scanner, username);
                                             break;
                                         case 2:
                                             errorFlag = false;
@@ -255,7 +256,9 @@ public class Interpreter {
 
     public static void logout(Scanner scanner, boolean[] loggedIn, boolean[] adminFlag) {
         try {
-            System.out.println("Are you sure?");
+            System.out.println(DIVIDER);
+            System.out.println("Are you sure to proceed logout?");
+
             System.out.println("1. Yes");
             System.out.println("2. No");
             System.out.print("Enter your choice: ");
@@ -345,7 +348,7 @@ public class Interpreter {
                 }
             } while (errorFlag);
         } while (running);
-        scanner.close();
+
     }
 
     public static void manageRewards(char actType, Scanner scanner) {
@@ -397,6 +400,7 @@ public class Interpreter {
             int rewardId = scanner.nextInt();
             String showInfo = RewardCatalogue.viewProduct(rewardId);
             if (showInfo != null) {
+                scanner.nextLine();//Clear input
                 System.out.println(showInfo);
                 System.out.println(DIVIDER);
                 System.out.println("*If data remain unchange then click \"Enter\"");
@@ -431,6 +435,7 @@ public class Interpreter {
             int rewardId = scanner.nextInt();
             String showInfo = RewardCatalogue.viewProduct(rewardId);
             if (showInfo != null) {
+                scanner.nextLine(); //Clear input
                 System.out.println(DIVIDER);
                 System.out.println("Are you sure to delete?");
                 System.out.println("Type [1] is yes");
@@ -517,7 +522,7 @@ public class Interpreter {
         System.out.println(DIVIDER);
         System.out.println("KnowledgeKash Menu > Redeem Rewards");
         System.out.println(DIVIDER);
-        RewardRedemption.listProducts();
+        rewardCatalogue[0].listProducts();
         System.out.print("Enter RewardId (Enter[0] to Exit):");
         do {
             try {
@@ -555,8 +560,8 @@ public class Interpreter {
                     PointManagement pm = new PointManagement();
                     pm.getClient(username[0]);
                     int tempInt = rewardCatalogue[0].getTempPoint();
-                    pm.IncreasePoints(tempInt);
-                    TransactionHistory th = new TransactionHistory(username[0], 'E', rewardCatalogue[0].getTempPoint());
+                    pm.decreasePoints(tempInt);
+                    TransactionHistory th = new TransactionHistory(username[0], 'R', tempInt);
                     th.writeTransactionToFile();
                 }
             }
@@ -686,17 +691,17 @@ public class Interpreter {
         System.out.println(DIVIDER);
         System.out.println("KnowledgeKash Admin > Manage Question");
         System.out.println(DIVIDER);
-        qr.listQuestion(page);
+
         int lastRecord;
         boolean errorFlag = false;
         while (page >= 1) {
             System.out.println("Page: " + page);
-            lastRecord = Admin.listUsers(page);
+            lastRecord = qr.listQuestion(page);
             System.out.println("1. Next Page");
             System.out.print(page == 1 ? "" : "2. Previous Page\n");
-            System.out.println("3. Create Question");
-            System.out.println("4. Update Question");
-            System.out.println("5. Delete Question");
+            System.out.print(page == 1 ? "2. Create Question\n" : "3. Create Question\n");
+            System.out.print(page == 1 ? "3. Update Question\n" : "4. Update Question\n");
+            System.out.print(page == 1 ? "4. Delete Question\n" : "5. Delete Question\n");
             System.out.println("0. Back");
             System.out.print("Enter your choice: ");
             do {
@@ -704,7 +709,7 @@ public class Interpreter {
                     int choice = scanner.nextInt();
                     switch (choice) {
                         case 1:
-                            int count = ((page + 1) - 1) * 20 + 4;
+                            int count = ((page + 1) - 1) * 3 + 1;
 
                             if (count >= lastRecord) {
                                 System.out.println("This is the last page.");
@@ -721,21 +726,41 @@ public class Interpreter {
                                 page--;
                                 errorFlag = false;
                             } else {
-                                System.out.println("Invalid choice. Please try again.");
-                                errorFlag = true;
+                                manageQuestion('A', scanner);
+                                errorFlag = false;
                             }
                             break;
                         case 3:
-                            manageQuestion('A', scanner);
-                            errorFlag = false;
+
+                            if (page > 1) {
+                                manageQuestion('A', scanner);
+                                errorFlag = false;
+                            } else {
+                                manageQuestion('C', scanner);
+                                errorFlag = false;
+                            }
+
                             break;
                         case 4:
-                            manageQuestion('C', scanner);
-                            errorFlag = false;
+
+                            if (page > 1) {
+                                manageQuestion('C', scanner);
+                                errorFlag = false;
+                            } else {
+                                manageQuestion('D', scanner);
+                                errorFlag = false;
+                            }
+
                             break;
                         case 5:
-                            manageQuestion('D', scanner);
-                            errorFlag = false;
+                            if (page > 1) {
+                                manageQuestion('D', scanner);
+                                errorFlag = false;
+                            } else {
+                                System.out.println("Invalid choice. Please try again.");
+                                errorFlag = true;
+                            }
+
                             break;
                         case 0:
                             errorFlag = false;
@@ -866,7 +891,9 @@ public class Interpreter {
         }
     }
 
-    public static void callAnswerQuestion(Scanner scanner) {
+    public static void callAnswerQuestion(Scanner scanner, String[] username) {
+        PointManagement pm = new PointManagement();
+        pm.getClient(username[0]);
         boolean errorFlag = false;
         System.out.println(DIVIDER);
         System.out.println("KnowledgeKash Menu > Answer Question");
@@ -883,21 +910,31 @@ public class Interpreter {
                         QuestionSelect qs = new QuestionSelect();
                         int questionCountS = qs.getTotalCount();
                         questionCountS = (int) (Math.random() * questionCountS + 1);
-                        qs.answerQuestion(questionCountS);
+                        int qSPoint = qs.answerQuestion(questionCountS);
+
+                        pm.increasePoints(qSPoint);
+                        TransactionHistory th1 = new TransactionHistory(username[0], 'E', qSPoint);
+                        th1.writeTransactionToFile();
                         errorFlag = false;
                         break;
                     case 2:
                         QuestionBoolean qb = new QuestionBoolean();
                         int questionCountBoo = qb.getTotalCount();
                         questionCountBoo = (int) (Math.random() * questionCountBoo + 101);
-                        qb.answerQuestion(questionCountBoo);
+                        int qBPoint = qb.answerQuestion(questionCountBoo);
+                        pm.increasePoints(qBPoint);
+                        TransactionHistory th2 = new TransactionHistory(username[0], 'E', qBPoint);
+                        th2.writeTransactionToFile();
                         errorFlag = false;
                         break;
                     case 3:
                         QuestionString qStr = new QuestionString();
                         int questionCountStr = qStr.getTotalCount();
                         questionCountStr = (int) (Math.random() * questionCountStr + 201);
-                        qStr.answerQuestion(questionCountStr);
+                        int qStrPoint = qStr.answerQuestion(questionCountStr);
+                        pm.increasePoints(qStrPoint);
+                        TransactionHistory th3 = new TransactionHistory(username[0], 'E', qStrPoint);
+                        th3.writeTransactionToFile();
                         errorFlag = false;
                         break;
                     case 0:

@@ -19,8 +19,18 @@ public class QuestionSelect extends QuestionRepository {
             while ((line = reader.readLine()) != null) {
                 String[] userData = line.split(",", -1);
 
-                if (userData.length > 0 && Integer.parseInt(userData[0]) < 101 && Integer.parseInt(userData[0]) > tempQuestionId) {
-                    tempQuestionId = Integer.parseInt(userData[0]);
+                if (userData.length > 0 && !userData[0].trim().isEmpty()
+                        && Integer.parseInt(userData[0].trim()) < 101
+                        && Integer.parseInt(userData[0].trim()) > tempQuestionId) {
+                    int holdTempQuestionId = tempQuestionId + 1;
+                    int runningNo = Integer.parseInt(userData[0].trim());
+                    if (holdTempQuestionId == runningNo) {
+                        tempQuestionId = runningNo;
+                    } else {
+                        tempQuestionId = holdTempQuestionId;
+                        break;
+                    }
+
                 }
             }
 
@@ -187,7 +197,8 @@ public class QuestionSelect extends QuestionRepository {
                 if (userData.length >= 1) {
                     String storedQuestionId = userData[0];
 
-                    if (questionId == Integer.parseInt(storedQuestionId)) {
+                    if (!storedQuestionId.isEmpty() && questionId == Integer.parseInt(storedQuestionId)) {
+
                         System.out.println("Question ID: " + questionId);
                         System.out.println("*No changes question or answer click \"Enter\"");
                         int count = 0;
@@ -196,6 +207,8 @@ public class QuestionSelect extends QuestionRepository {
                             count++;
                             if (i + 1 < userData.length) {
                                 System.out.println("Question" + questionIndex + ": " + userData[i]);
+                                System.out.print("Enter question:");
+
                                 String questionChanger = scanner.nextLine();
                                 if (questionChanger.isEmpty()) {
                                     tempSaveQuestion[i - 1] = userData[i];
@@ -203,6 +216,8 @@ public class QuestionSelect extends QuestionRepository {
                                     tempSaveQuestion[i - 1] = questionChanger;
                                 }
                                 System.out.println("Answer" + questionIndex + ": " + userData[i + 1]);
+                                System.out.print("Enter answer:");
+
                                 String AnswerChanger = scanner.nextLine();
                                 if (AnswerChanger.isEmpty()) {
                                     tempSaveQuestion[i] = userData[i + 1];
@@ -226,11 +241,11 @@ public class QuestionSelect extends QuestionRepository {
             }
 
             if (!updated) {
-                System.err.println("Username not found.");
+                System.err.println("Question not found.");
                 return false;
             }
         } catch (IOException e) {
-            System.err.println("Error updating user data: " + e.getMessage());
+            System.err.println("Error updating question data: " + e.getMessage());
             return false;
         }
 
@@ -254,7 +269,7 @@ public class QuestionSelect extends QuestionRepository {
                 return false;
             }
 
-            System.out.println("Account updated.");
+            System.out.println("Question updated.");
             return true;
         } catch (Exception ex) {
             System.err.println("Error replacing files: " + ex.getMessage());
@@ -267,7 +282,6 @@ public class QuestionSelect extends QuestionRepository {
         return answer.equals("A") || answer.equals("B") || answer.equals("C") || answer.equals("D");
     }
 
-    
     @Override
     public int getTotalCount() {
         int lineCount = 0;
@@ -287,7 +301,6 @@ public class QuestionSelect extends QuestionRepository {
             return -1;
         }
 
-        
         return lineCount;
 
     }

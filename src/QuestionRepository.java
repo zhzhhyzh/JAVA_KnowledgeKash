@@ -10,6 +10,7 @@ public class QuestionRepository {
 
     private static final String DELIMITER = ",";
     static final String DIVIDER = "----------------------------------------------------------------------------------------------------------------------------------------------";
+    static final String DIVIDER2 = "==============================================================================================================================================";
 
     public static final String QUES_FILE_PATH = "question.txt";
 
@@ -63,11 +64,13 @@ public class QuestionRepository {
                         for (int i = 1; i < userData.length; i += 2) {
                             if (i + 1 < userData.length) {
                                 int questionIndex = i - count;
-                                System.out.println("Question" + questionIndex + ": " + userData[i]);
-                                System.out.println("Answer" + questionIndex + ": " + userData[i + 1]);
+                                System.out.println("Question " + questionId + "." + questionIndex + ": " + userData[i]);
+                                System.out.println("Answer " + questionId + "." + questionIndex + ": " + userData[i + 1]);
                                 count++;
                             }
                         }
+                        //Print footer for each
+                        System.out.println(DIVIDER2);
                     }
                 }
 
@@ -77,8 +80,7 @@ public class QuestionRepository {
             return -1;
         }
 
-        // Print the footer
-        System.out.println(DIVIDER);
+      
         return lineCount;
     }
 
