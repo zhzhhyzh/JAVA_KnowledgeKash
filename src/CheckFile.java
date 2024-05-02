@@ -11,9 +11,9 @@ public class CheckFile {
     private static final String TRAN_FILE_PATH = "transactionHistory.txt";
     private static final String PROD_FILE_PATH = "product.txt";
     private static final String DELIMITER = ",";
-    private static final String USER_INITIAL_DATA = "admin1,123456,Admin 1,null,null,true,0,0,0,null\n"
-            + "admin2,1234566,Admin 2,null,null,true,0,0,0,null\n"
-            + "admin3,abc123,Admin 3,null,null,true,0,0,0,null\n";
+    private static final String USER_INITIAL_DATA = "admin1,123456,Admin 1,null,null,true,0,0,7,null\n"
+            + "admin2,1234566,Admin 2,null,null,true,0,0,7,null\n"
+            + "admin3,abc123,Admin 3,null,null,true,0,0,7,null\n";
 
     private static final String PROD_INITIAL_DATA = "1001,$5 Coupon,Can be used in any merchant, 5, 100\n"
             + "1002,$10 Coupon,Can be used in any merchant, 10, 100\n"
