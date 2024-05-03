@@ -114,12 +114,6 @@ public class PointManagement {
 //        return availablePoints;
     }
 
-    public int pointsExpired(int points) {
-        totalExpiredPoints += points;
-        updatePoints("user.txt");
-        return totalExpiredPoints;
-    }
-
     @Override
     public String toString() {
         return "Total Earned Points : " + totalEarnedPoints + "\n"

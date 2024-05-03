@@ -1,8 +1,0 @@
-admin1,123456,Admin 1,null,null,true,0,34,0,2024-05-03
-admin2,1234566,Admin 2,null,null,true,0,34,0,2024-05-03
-admin3,abc123,Admin 3,null,null,true,0,34,0,2024-05-03
-kenneth_wong,123456,John Doe,1234567890,john@example.com,false,0,0,0,null
-rer,123456,John Doe,1234567890,john@example.com,false,0,0,0,null
-rerr,123456,John Doe,1234567890,john@example.com,false,0,0,0,null
-yzh,1234566,Yeoh Zhe Heng,0182563811,null,false,438,175,20,2024-05-03
-admin,123456,Fake Admin,null,null,false,0,34,0,2024-05-03
