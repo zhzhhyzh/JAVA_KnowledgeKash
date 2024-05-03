@@ -134,52 +134,51 @@ public class Interpreter {
 
                         } else if (loggedIn[0]) {
                             int choice = 0;
-                            
-                                System.out.println(DIVIDER);
-                                System.out.println("KnowledgeKash Menu");
-                                System.out.println(DIVIDER);
-                                System.out.println("1. Get Points! -- Answer Question");
-                                System.out.println("2. Spend My Points! -- Redeem Rewards");
-                                System.out.println("3. Profile");
-                                System.out.println("0. Logout");
-                                System.out.print("Enter your choice: ");
-                                do {
-                                    try {
-                                        // Get user input
-                                        choice = scanner.nextInt();
-                                        scanner.nextLine(); // Consume newline
 
-                                        // Process user choice
-                                        switch (choice) {
-                                            case 1:
-                                                errorFlag = false;
-                                                callAnswerQuestion(scanner, username);
-                                                break;
-                                            case 2:
-                                                errorFlag = false;
+                            System.out.println(DIVIDER);
+                            System.out.println("KnowledgeKash Menu");
+                            System.out.println(DIVIDER);
+                            System.out.println("1. Get Points! -- Answer Question");
+                            System.out.println("2. Spend My Points! -- Redeem Rewards");
+                            System.out.println("3. Profile");
+                            System.out.println("0. Logout");
+                            System.out.print("Enter your choice: ");
+                            do {
+                                try {
+                                    // Get user input
+                                    choice = scanner.nextInt();
+                                    scanner.nextLine(); // Consume newline
 
-                                                callRedeemRewards(rewardCatalogue, scanner, username);
-                                                break;
-                                            case 3:
-                                                errorFlag = false;
-                                                callProfile(username, scanner);
-                                                break;
-                                            case 0:
-                                                errorFlag = false;
-                                                logout(scanner, loggedIn, adminFlag);
+                                    // Process user choice
+                                    switch (choice) {
+                                        case 1:
+                                            errorFlag = false;
+                                            callAnswerQuestion(scanner, username);
+                                            break;
+                                        case 2:
+                                            errorFlag = false;
 
-                                                break;
-                                            default:
-                                                errorFlag = true;
-                                                System.out.println("Invalid choice. Please try again.");
-                                        }
-                                    } catch (InputMismatchException ex) {
-                                        scanner.next();
-                                        System.out.println("Invalid input. Please try again.");
-                                        errorFlag = true;
+                                            callRedeemRewards(rewardCatalogue, scanner, username);
+                                            break;
+                                        case 3:
+                                            errorFlag = false;
+                                            callProfile(username, scanner);
+                                            break;
+                                        case 0:
+                                            errorFlag = false;
+                                            logout(scanner, loggedIn, adminFlag);
+
+                                            break;
+                                        default:
+                                            errorFlag = true;
+                                            System.out.println("Invalid choice. Please try again.");
                                     }
-                                } while (errorFlag);
-                           
+                                } catch (InputMismatchException ex) {
+                                    scanner.next();
+                                    System.out.println("Invalid input. Please try again.");
+                                    errorFlag = true;
+                                }
+                            } while (errorFlag);
 
                         }
                     } while (loggedIn[0]);
@@ -558,14 +557,19 @@ public class Interpreter {
                 scanner.nextLine(); // Clear input
                 String responseGetter = scanner.nextLine();
                 if (responseGetter.equals("1")) {
-                    RewardRedemption.redeemProduct(choices);
 
                     PointManagement pm = new PointManagement();
                     pm.getClient(username[0]);
+                    int identifier = pm.getAvailablePoints();
                     int tempInt = rewardCatalogue[0].getTempPoint();
-                    pm.decreasePoints(tempInt);
-                    TransactionHistory th = new TransactionHistory(username[0], 'R', tempInt);
-                    th.writeTransactionToFile();
+                    if (identifier < tempInt) {
+                        System.out.println("Point not enough to proceed.");
+                    } else {
+                        RewardRedemption.redeemProduct(choices);
+                        pm.decreasePoints(tempInt);
+                        TransactionHistory th = new TransactionHistory(username[0], 'R', tempInt);
+                        th.writeTransactionToFile();
+                    }
                 }
             }
         }
