@@ -95,7 +95,7 @@ public class TransactionHistory {
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("transactionHistory.txt", true))) {
             writer.write(transactionDetails);
-            System.out.println("Transaction details written to transactionHistory.txt successfully.");
+            System.out.println("Transaction successfully.");
         } catch (IOException e) {
             System.out.println("Error writing transaction details to file: " + e.getMessage());
         }

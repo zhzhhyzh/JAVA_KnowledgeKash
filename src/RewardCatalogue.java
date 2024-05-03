@@ -12,7 +12,7 @@ public class RewardCatalogue {
     private static ArrayList<String> description = new ArrayList<>();
     private static ArrayList<Integer> pointCost = new ArrayList<>();
     private static ArrayList<Integer> stock = new ArrayList<>();
-    private static int itemCount ;
+    private static int itemCount;
 
     public static String tempName;
     public static String tempDescription;
@@ -46,13 +46,13 @@ public class RewardCatalogue {
     }
 
     public static void addProduct(String productName, String productDescription, int cost, int productStock) {
-        int id = getRunningRewardId() + 1  ;
+        int id = getRunningRewardId() + 1;
         rewardId.add(id);
         name.add(productName);
         description.add(productDescription);
         pointCost.add(cost);
         stock.add(productStock);
-        
+
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(PROD_FILE_PATH, true))) {
             writer.write(String.format("%d,%s,%s,%d,%d%n", id, productName, productDescription, cost, productStock));
         } catch (IOException e) {
@@ -284,13 +284,36 @@ public class RewardCatalogue {
         } catch (IOException e) {
             System.err.println("Error updating product stock: " + e.getMessage());
         }
+
+        // Replace the original file with the temporary file
+        try {
+            File originalFile = new File(PROD_FILE_PATH);
+            File tempFile = new File(PROD_FILE_PATH + ".tmp");
+
+            if (!tempFile.exists() || !tempFile.canRead()) {
+                System.err.println("Temporary file is missing or cannot be read.");
+            }
+
+            if (!originalFile.delete()) {
+                System.err.println("Failed to delete the original file.");
+            }
+
+            if (!tempFile.renameTo(originalFile)) {
+                System.err.println("Failed to replace the original file with the temporary file.");
+            }
+
+            System.out.println("Product updated.");
+        } catch (Exception ex) {
+            System.err.println("Error replacing files: " + ex.getMessage());
+        }
     }
 
+   
     public boolean productExists(int productId) {
         return findProductIndex(productId) != -1;
     }
-    
-     private static int getRunningRewardId() {
+
+    private static int getRunningRewardId() {
         int tempRewardId = 1001;
         try (BufferedReader reader = new BufferedReader(new FileReader(PROD_FILE_PATH))) {
             String line;

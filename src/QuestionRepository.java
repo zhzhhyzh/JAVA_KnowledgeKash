@@ -22,23 +22,28 @@ public class QuestionRepository {
             while ((line = reader.readLine()) != null) {
                 String[] userData = line.split(",", -1);
 
-                if (userData.length > 0 && Integer.parseInt(userData[0]) == questionId) {
-                    System.out.println("Question ID: " + questionId);
-                    dataFound = true;
-                    int count = 0;
-                    for (int i = 1; i < userData.length; i += 2) {
-                        int questionIndex = i - count;
-                        if (i + 1 < userData.length) {
-                            System.out.println("Question" + questionIndex + ": " + userData[i]);
-                            System.out.println("Answer" + questionIndex + ": " + userData[i + 1]);
-                            count++;
+                if (userData.length > 0 && userData[0].matches("\\d+")) {
+                    int storedQuestionId = Integer.parseInt(userData[0]);
+                    if (storedQuestionId == questionId) {
+                        System.out.println("Question ID: " + questionId);
+                        dataFound = true;
+                        int count = 0;
+                        for (int i = 1; i < userData.length; i += 2) {
+                            int questionIndex = i - count;
+                            if (i + 1 < userData.length) {
+                                System.out.println("Question" + questionIndex + ": " + userData[i]);
+                                System.out.println("Answer" + questionIndex + ": " + userData[i + 1]);
+                                count++;
+                            }
                         }
+
                     }
                 }
             }
             if (!dataFound) {
                 System.out.println("Question with ID " + questionId + " not found.");
             }
+
         } catch (IOException e) {
             System.err.println("Error reading question file: " + e.getMessage());
         }
@@ -54,6 +59,7 @@ public class QuestionRepository {
             String line;
             while ((line = reader.readLine()) != null) {
                 lineCount++;
+
                 if (lineCount >= startLine && lineCount <= endLine) {
                     // Split the line using the delimiter ","
                     String[] userData = line.split(DELIMITER);
@@ -80,8 +86,7 @@ public class QuestionRepository {
             return -1;
         }
 
-      
-        return lineCount;
+        return lineCount ;
     }
 
     public void deleteQuestion(int questionId) {
@@ -92,15 +97,18 @@ public class QuestionRepository {
             while ((line = reader.readLine()) != null) {
                 String[] userData = line.split(",", -1);
 
-                if (userData.length > 0 && Integer.parseInt(userData[0]) == questionId) {
-                    questionFound = true;
-                    // Skip writing this line to the temporary file (effectively deleting it)
-                } else {
-                    // Write the line to the temporary file
-                    writer.write(line);
-                    writer.newLine();
-                }
+                if (userData.length > 0 && userData[0].matches("\\d+")) {
+                    int storedQuestionId = Integer.parseInt(userData[0]);
+                    if (storedQuestionId == questionId) {
+                        questionFound = true;
+                        // Skip writing this line to the temporary file (effectively deleting it)
+                    } else {
+                        // Write the line to the temporary file
+                        writer.write(line);
+                        writer.newLine();
+                    }
 
+                }
             }
             if (!questionFound) {
                 System.out.println("Question with ID " + questionId + " not found.");

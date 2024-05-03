@@ -3,4 +3,4 @@
 1003,$23 Coupon,Can be used in any merchant,23,50
 1005,rr,rr,55,33
 1006,hh,hh,23,45
-1007,tr,tr,34,33
+1007,tr,tr,34,32
