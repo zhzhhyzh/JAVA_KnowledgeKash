@@ -28,6 +28,8 @@ public class Policy {
                     } else if (LocalDate.parse(transactionDate).isBefore(periodTerm) && Integer.parseInt(userData[8]) >= 50) {
                         int currentPoints = Integer.parseInt(userData[8]);
                         currentPoints -= 10;
+                        TransactionHistory th = new TransactionHistory(username, 'P', 10);
+                        th.writeTransactionToFile();
                         userData[8] = String.valueOf(currentPoints);
                         userData[9] = currentDate.toString();
                     }
