@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class RewardCatalogue {
 
     private static final String DELIMITER = ",";
-    private static final String DIVIDER = "-----------------------------------------------------------------------------------------";
+    private static final String DIVIDER = "-------------------------------------------------------------------------------------------";
     private static final String PROD_FILE_PATH = "product.txt";
     private static ArrayList<Integer> rewardId = new ArrayList<>();
     private static ArrayList<String> name = new ArrayList<>();
@@ -179,7 +179,7 @@ public class RewardCatalogue {
 
         // Print table header
         System.out.println(DIVIDER);
-        System.out.printf("%-12s | %-20s | %-30s | %-10s | %-6s%n",
+        System.out.printf("%-12s | %-20s | %-30s | %-10s | %-6s|%n",
                 "Product ID", "Name", "Description", "Point Cost", "Stock");
         System.out.println(DIVIDER);
 
@@ -192,7 +192,7 @@ public class RewardCatalogue {
                 String prodDesc = data[2];
                 int cost = Integer.parseInt(data[3].trim());
                 int prodStock = Integer.parseInt(data[4].trim());
-                System.out.printf("%-12d | %-20s | %-30s | %-10d | %-6d%n", id, prodName, prodDesc, cost, prodStock);
+                System.out.printf("%-12d | %-20s | %-30s | %10d | %5d |%n", id, prodName, prodDesc, cost, prodStock);
             }
         } catch (IOException e) {
             System.err.println("Error reading products from file: " + e.getMessage());
@@ -275,7 +275,7 @@ public class RewardCatalogue {
                 String[] data = line.split(",");
                 int id = Integer.parseInt(data[0]);
                 if (id == productId) {
-                    int updatedStock = Integer.parseInt(data[4]) + change;
+                    int updatedStock = Integer.parseInt(data[4].trim()) + change;
                     data[4] = String.valueOf(updatedStock);
                 }
                 writer.write(String.join(",", data));
@@ -302,7 +302,6 @@ public class RewardCatalogue {
                 System.err.println("Failed to replace the original file with the temporary file.");
             }
 
-            System.out.println("Product updated.");
         } catch (Exception ex) {
             System.err.println("Error replacing files: " + ex.getMessage());
         }

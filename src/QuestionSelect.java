@@ -135,7 +135,11 @@ public class QuestionSelect extends QuestionRepository {
                             int questionIndex = i - count;
                             System.out.print("Enter your answer: ");
                             String answer = scanner.nextLine();
-                            pointAccummulate += pointDistribute(questionIndex, answer);
+                            int holdPoint = pointDistribute(questionIndex, answer);
+                            pointAccummulate += holdPoint;
+                            if(holdPoint== 0){
+                                System.out.println("No point will added due to invalid input.");
+                            }
 
                         }
                     }
