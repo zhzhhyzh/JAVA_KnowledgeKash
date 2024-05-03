@@ -13,7 +13,7 @@ public class RewardRedemption {
                 catalogue.updateProductStock(productId, -1);
                 System.out.println("Product redeemed successfully.");
             } else {
-                System.out.println("Product is out of stock. Cannot redeem.");
+                System.out.println("Product is out of stock. Can't redeem.");
             }
         } else {
             System.out.println("Product not found in the catalogue.");

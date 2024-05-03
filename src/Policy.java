@@ -4,6 +4,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 
 public class Policy {
 
@@ -79,6 +81,7 @@ public class Policy {
             if (firstLine != null) {
                 String[] userData = firstLine.split(",");
                 if (userData.length > 8) {
+                    dayCount = Integer.parseInt(userData[8]);
                     return Integer.parseInt(userData[8]);
                 } else {
                     System.err.println("Invalid format in user file: Missing field at index 8");
@@ -89,7 +92,27 @@ public class Policy {
         } catch (IOException e) {
             System.err.println("Error reading user file: " + e.getMessage());
         }
-        return 0; 
+        return 0;
+    }
+
+    public static void showExpired(String username) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("user.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] userData = line.split(",");
+                if (userData.length > 9 && username.equals(userData[0].trim())) {
+                    String lastTransactionDateStr = userData[9].trim();
+                    LocalDate lastTransactionDate = LocalDate.parse(lastTransactionDateStr, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                    LocalDate currentDate = LocalDate.now();
+                    getDayCount();
+                    long daysLeft = ChronoUnit.DAYS.between(currentDate, lastTransactionDate.plusDays(dayCount));
+                    System.out.println("Days left until 10 points deduction: " + daysLeft);
+                    break; // Exit the loop after processing the user data
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error reading user file: " + e.getMessage());
+        }
     }
 
 }

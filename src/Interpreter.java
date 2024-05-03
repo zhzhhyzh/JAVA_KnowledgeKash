@@ -520,11 +520,17 @@ public class Interpreter {
     public static void callRedeemRewards(RewardCatalogue[] rewardCatalogue, Scanner scanner, String[] username) {
         boolean errorFlag = false;
         int choices = 0;
+        PointManagement pm = new PointManagement();
+        pm.getClient(username[0]);
+        int identifier = pm.getAvailablePoints();
         System.out.println(DIVIDER);
         System.out.println("KnowledgeKash Menu > Redeem Rewards");
         System.out.println(DIVIDER);
         rewardCatalogue[0].listProducts();
+
+        System.out.println("Current available points: " + identifier + "point(s)");
         System.out.print("Enter RewardId (Enter[0] to Exit):");
+
         do {
             try {
                 choices = scanner.nextInt();
@@ -558,9 +564,6 @@ public class Interpreter {
                 String responseGetter = scanner.nextLine();
                 if (responseGetter.equals("1")) {
 
-                    PointManagement pm = new PointManagement();
-                    pm.getClient(username[0]);
-                    int identifier = pm.getAvailablePoints();
                     int tempInt = rewardCatalogue[0].getTempPoint();
                     if (identifier < tempInt) {
                         System.out.println("Point not enough to proceed.");
@@ -569,6 +572,7 @@ public class Interpreter {
                         pm.decreasePoints(tempInt);
                         TransactionHistory th = new TransactionHistory(username[0], 'R', tempInt);
                         th.writeTransactionToFile();
+                        System.out.println("Current available point(s): " + pm.getAvailablePoints());
                     }
                 }
             }
@@ -582,6 +586,7 @@ public class Interpreter {
         PointManagement pm = new PointManagement();
         pm.getClient(username[0]);
         System.out.println(pm.toString());
+       Policy.showExpired(username[0]);
         System.out.println("1. View/Update Profile");
         System.out.println("0. Back");
         System.out.println("Enter your choice:");
@@ -909,6 +914,8 @@ public class Interpreter {
         System.out.println("1. Question's answer by Selection");
         System.out.println("2. Question's answer by Boolean");
         System.out.println("3. Question's answer by String");
+        System.out.println("0. Back");
+
         System.out.print("Choose your selection: ");
         do {
             try {
