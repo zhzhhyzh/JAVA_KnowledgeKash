@@ -133,51 +133,53 @@ public class Interpreter {
                             } while (errorFlag);
 
                         } else if (loggedIn[0]) {
+                            int choice = 0;
+                            
+                                System.out.println(DIVIDER);
+                                System.out.println("KnowledgeKash Menu");
+                                System.out.println(DIVIDER);
+                                System.out.println("1. Get Points! -- Answer Question");
+                                System.out.println("2. Spend My Points! -- Redeem Rewards");
+                                System.out.println("3. Profile");
+                                System.out.println("0. Logout");
+                                System.out.print("Enter your choice: ");
+                                do {
+                                    try {
+                                        // Get user input
+                                        choice = scanner.nextInt();
+                                        scanner.nextLine(); // Consume newline
 
-                            System.out.println(DIVIDER);
-                            System.out.println("KnowledgeKash Menu");
-                            System.out.println(DIVIDER);
-                            System.out.println("1. Get Points! -- Answer Question");
-                            System.out.println("2. Spend My Points! -- Redeem Rewards");
-                            System.out.println("3. Profile");
-                            System.out.println("0. Logout");
-                            System.out.print("Enter your choice: ");
-                            do {
-                                try {
-                                    // Get user input
-                                    int choice = scanner.nextInt();
-                                    scanner.nextLine(); // Consume newline
+                                        // Process user choice
+                                        switch (choice) {
+                                            case 1:
+                                                errorFlag = false;
+                                                callAnswerQuestion(scanner, username);
+                                                break;
+                                            case 2:
+                                                errorFlag = false;
 
-                                    // Process user choice
-                                    switch (choice) {
-                                        case 1:
-                                            errorFlag = false;
-                                            callAnswerQuestion(scanner, username);
-                                            break;
-                                        case 2:
-                                            errorFlag = false;
+                                                callRedeemRewards(rewardCatalogue, scanner, username);
+                                                break;
+                                            case 3:
+                                                errorFlag = false;
+                                                callProfile(username, scanner);
+                                                break;
+                                            case 0:
+                                                errorFlag = false;
+                                                logout(scanner, loggedIn, adminFlag);
 
-                                            callRedeemRewards(rewardCatalogue, scanner, username);
-                                            break;
-                                        case 3:
-                                            errorFlag = false;
-                                            callProfile(username, scanner);
-                                            break;
-                                        case 0:
-                                            errorFlag = false;
-                                            logout(scanner, loggedIn, adminFlag);
-
-                                            break;
-                                        default:
-                                            errorFlag = true;
-                                            System.out.println("Invalid choice. Please try again.");
+                                                break;
+                                            default:
+                                                errorFlag = true;
+                                                System.out.println("Invalid choice. Please try again.");
+                                        }
+                                    } catch (InputMismatchException ex) {
+                                        scanner.next();
+                                        System.out.println("Invalid input. Please try again.");
+                                        errorFlag = true;
                                     }
-                                } catch (InputMismatchException ex) {
-                                    scanner.next();
-                                    System.out.println("Invalid input. Please try again.");
-                                    errorFlag = true;
-                                }
-                            } while (errorFlag);
+                                } while (errorFlag);
+                           
 
                         }
                     } while (loggedIn[0]);
@@ -553,6 +555,7 @@ public class Interpreter {
             if (showInfo != null) {
                 System.out.println("Are you sure to redeem?");
                 System.out.println("Type [1] is yes");
+                scanner.nextLine(); // Clear input
                 String responseGetter = scanner.nextLine();
                 if (responseGetter.equals("1")) {
                     RewardRedemption.redeemProduct(choices);
@@ -709,9 +712,9 @@ public class Interpreter {
                     int choice = scanner.nextInt();
                     switch (choice) {
                         case 1:
-                            int count = ((page + 1) - 1) * 3 + 1;
-
-                            if (count >= lastRecord) {
+                            int count = (page) * 3 + 1;
+//                            System.err.println(count + ">>" + lastRecord);
+                            if (count > lastRecord) {
                                 System.out.println("This is the last page.");
                                 errorFlag = true;
                                 System.out.print("Enter your choice again: ");
@@ -883,6 +886,7 @@ public class Interpreter {
                 System.out.println("Are you sure to delete?");
 
                 System.out.println("Type [1] to confirm");
+                scanner.nextLine();
                 String confirmKey = scanner.nextLine();
                 if (confirmKey.equals("1")) {
                     qr.deleteQuestion(choice);

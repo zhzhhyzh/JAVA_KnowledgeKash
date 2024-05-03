@@ -13,24 +13,27 @@ public class QuestionSelect extends QuestionRepository {
     private static final String DELIMITER = ",";
 
     private static int getRunningQuestionId() {
-        int tempQuestionId = 0;
+        int missingNumber = -1;
+
         try (BufferedReader reader = new BufferedReader(new FileReader(QUES_FILE_PATH))) {
             String line;
+            boolean[] numberExists = new boolean[101];
+
             while ((line = reader.readLine()) != null) {
                 String[] userData = line.split(",", -1);
 
-                if (userData.length > 0 && !userData[0].trim().isEmpty()
-                        && Integer.parseInt(userData[0].trim()) < 101
-                        && Integer.parseInt(userData[0].trim()) > tempQuestionId) {
-                    int holdTempQuestionId = tempQuestionId + 1;
+                if (userData.length > 0) {
                     int runningNo = Integer.parseInt(userData[0].trim());
-                    if (holdTempQuestionId == runningNo) {
-                        tempQuestionId = runningNo;
-                    } else {
-                        tempQuestionId = holdTempQuestionId;
-                        break;
+                    if (runningNo >= 1 && runningNo <= 100) {
+                        numberExists[runningNo] = true;
                     }
+                }
 
+            }
+            for (int i = 1; i < numberExists.length; i++) {
+                if (!numberExists[i]) {
+                    missingNumber = i;
+                    break;
                 }
             }
 
@@ -38,8 +41,8 @@ public class QuestionSelect extends QuestionRepository {
             System.err.println("Error reading question file: " + e.getMessage());
             return -1;
         }
-        questionId = tempQuestionId;
-        return tempQuestionId;
+        questionId = missingNumber;
+        return missingNumber;
     }
 
     public int pointDistribute(int questionIndex, String answer) {
@@ -153,7 +156,7 @@ public class QuestionSelect extends QuestionRepository {
             Scanner scanner = new Scanner(System.in);
 
             // Get the next available question ID
-            questionId = getRunningQuestionId() + 1;
+            questionId = getRunningQuestionId();
             String[] tempSave = new String[20];
             for (int i = 0; i < 20; i++) {
                 if (i % 2 == 0) {
@@ -175,7 +178,7 @@ public class QuestionSelect extends QuestionRepository {
                     + "," + tempSave[10] + "," + tempSave[11] + "," + tempSave[12]
                     + "," + tempSave[13] + "," + tempSave[14] + "," + tempSave[15]
                     + "," + tempSave[16] + "," + tempSave[17] + "," + tempSave[18]
-                    + "," + tempSave[19] + "\n");
+                    + "," + tempSave[19]);
             writer.newLine();
 
             System.out.println("Question created successfully!");
