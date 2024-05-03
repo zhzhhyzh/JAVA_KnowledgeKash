@@ -7,12 +7,16 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class TransactionHistory {
 
+    private static final int TRANSACTIONS_PER_PAGE = 20;
+    private static final String DIVIDER = "--------------------------------------------------------------------------";
     private static final String TRANSACTION_FILE_PATH = "transactionHistory.txt";
     private static final String DELIMITER = ",";
     private int transactionId;
@@ -24,8 +28,8 @@ public class TransactionHistory {
     TransactionHistory() {
     }
 
- public TransactionHistory(String username, char transactionType, int points) {
-        this.username = username; 
+    public TransactionHistory(String username, char transactionType, int points) {
+        this.username = username;
         this.transactionType = transactionType;
         this.points = points;
         this.transactionDate = new Date();
@@ -101,72 +105,130 @@ public class TransactionHistory {
         }
     }
 
-    public static List<TransactionHistory> listTransactions(char filterTransactionType, Date startDate, Date endDate) {
-        List<TransactionHistory> transactions = new ArrayList<>();
+    public static int listTransaction(int page) {
+        int lineCount = 0;
 
-        try (BufferedReader reader = new BufferedReader(new FileReader("transactionHistory.txt"))) {
+        int startIndex = (page - 1) * TRANSACTIONS_PER_PAGE + 1;
+        int endIndex = startIndex + TRANSACTIONS_PER_PAGE - 1;
+        System.out.println("--------------------------------------------------------------------------");
+        System.out.printf("| %-15s | %-15s | %-15s | %-7s | %-15s |%n", "Transaction ID", "Username", "Type", "Points", "Date");
+        System.out.println("--------------------------------------------------------------------------");
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(TRANSACTION_FILE_PATH))) {
             String line;
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
             while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(",");
-                int transactionId = Integer.parseInt(parts[0]);
-                String username = parts[1];
-                char transactionType = parts[2].charAt(0);
-                int points = Integer.parseInt(parts[3]);
-                Date transactionDate = dateFormat.parse(parts[4]);
-
-                // Apply filters
-                if ((filterTransactionType == '\u0000' || transactionType == filterTransactionType)
-                        && (startDate == null || transactionDate.after(startDate))
-                        && (endDate == null || transactionDate.before(endDate))) {
-                    TransactionHistory transaction = new TransactionHistory();
-                    transaction.setTransactionId(transactionId);
-                    transaction.setUserId(username);
-                    transaction.setTransactionType(transactionType);
-                    transaction.setPoints(points);
-                    transaction.setTransactionDate(transactionDate);
-                    transactions.add(transaction);
+                lineCount++;
+                if (lineCount >= startIndex && lineCount <= endIndex) {
+                    String[] userData = line.split(",");
+                    // Print transaction data in table format
+                    System.out.printf("| %-15s | %-15s | %-15s | %-7s | %-15s |%n",
+                            userData[0], userData[1], userData[2], userData[3], userData[4]);
+                } else if (lineCount > endIndex) {
+                    break; // Exit loop if reached end index
                 }
             }
-        } catch (IOException | ParseException e) {
-            System.out.println("Error reading transaction history: " + e.getMessage());
-        }
+        } catch (IOException e) {
+            System.err.println("Error reading transaction file: " + e.getMessage());
 
-        return transactions;
+        }
+        System.out.println("--------------------------------------------------------------------------");
+        return lineCount;
     }
 
-    //Admin using to find list
-    public static List<TransactionHistory> listTransactionsByUsername(String username) {
-        List<TransactionHistory> userTransactions = new ArrayList<>();
+    public static int listTransactionByType(char transactionType, int page) {
+        int lineCount = 0;
 
-        try (BufferedReader reader = new BufferedReader(new FileReader("transactionHistory.txt"))) {
+        int startIndex = (page - 1) * TRANSACTIONS_PER_PAGE + 1;
+        int endIndex = startIndex + TRANSACTIONS_PER_PAGE - 1;
+        System.out.println("--------------------------------------------------------------------------");
+        System.out.printf("| %-15s | %-15s | %-15s | %-7s | %-15s |%n", "Transaction ID", "Username", "Type", "Points", "Date");
+        System.out.println("--------------------------------------------------------------------------");
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(TRANSACTION_FILE_PATH))) {
             String line;
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
             while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(",");
-                int transactionId = Integer.parseInt(parts[0]);
-                String user = parts[1];
-                char transactionType = parts[2].charAt(0);
-                int points = Integer.parseInt(parts[3]);
-                Date transactionDate = dateFormat.parse(parts[4]);
-
-                if (user.equals(username)) {
-                    TransactionHistory transaction = new TransactionHistory();
-                    transaction.setTransactionId(transactionId);
-                    transaction.setUserId(user);
-                    transaction.setTransactionType(transactionType);
-                    transaction.setPoints(points);
-                    transaction.setTransactionDate(transactionDate);
-                    userTransactions.add(transaction);
+                String[] userData = line.split(",");
+                char type = userData[2].charAt(0); // Get the transaction type
+                if (type == transactionType) {
+                    lineCount++;
+                    if (lineCount >= startIndex && lineCount <= endIndex) {
+                        // Print transaction data in table format
+                        System.out.printf("| %-15s | %-15s | %-15s | %-7s | %-15s |%n",
+                                userData[0], userData[1], userData[2], userData[3], userData[4]);
+                    } else if (lineCount > endIndex) {
+                        break; // Exit loop if reached end index
+                    }
                 }
             }
-        } catch (IOException | ParseException e) {
-            System.out.println("Error reading transaction history: " + e.getMessage());
+        } catch (IOException e) {
+            System.err.println("Error reading transaction file: " + e.getMessage());
         }
+        System.out.println(DIVIDER);
+        return lineCount;
+    }
 
-        return userTransactions;
+    public static int listTransactionByDate(LocalDate startDate, LocalDate endDate, int page) {
+        int lineCount = 0;
+        int startIndex = (page - 1) * TRANSACTIONS_PER_PAGE + 1;
+        int endIndex = startIndex + TRANSACTIONS_PER_PAGE - 1;
+
+        System.out.println(DIVIDER);
+        System.out.printf("| %-15s | %-15s | %-15s | %-7s | %-15s |%n", "Transaction ID", "Username", "Type", "Points", "Date");
+        System.out.println(DIVIDER);
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(TRANSACTION_FILE_PATH))) {
+            String line;
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            while ((line = reader.readLine()) != null) {
+                String[] userData = line.split(",");
+                LocalDate transactionDate = LocalDate.parse(userData[4], formatter);
+                if (transactionDate.isAfter(startDate) && transactionDate.isBefore(endDate)) {
+                    lineCount++;
+                    if (lineCount >= startIndex && lineCount <= endIndex) {
+                        // Print transaction data in table format
+                        System.out.printf("| %-15s | %-15s | %-15s | %-7s | %-15s |%n",
+                                userData[0], userData[1], userData[2], userData[3], userData[4]);
+                    } else if (lineCount > endIndex) {
+                        break; // Exit loop if reached end index
+                    }
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error reading transaction file: " + e.getMessage());
+        }
+        System.out.println(DIVIDER);
+        return lineCount;
+    }
+
+    public static int listTransactionByTypeAndDate(char transactionType, LocalDate startDate, LocalDate endDate, int page) {
+        int lineCount = 0;
+        int startIndex = (page - 1) * TRANSACTIONS_PER_PAGE + 1;
+        int endIndex = startIndex + TRANSACTIONS_PER_PAGE - 1;
+
+        System.out.println(DIVIDER);
+        System.out.printf("| %-15s | %-15s | %-15s | %-7s | %-15s |%n", "Transaction ID", "Username", "Type", "Points", "Date");
+        System.out.println(DIVIDER);
+        try (BufferedReader reader = new BufferedReader(new FileReader(TRANSACTION_FILE_PATH))) {
+            String line;
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            while ((line = reader.readLine()) != null) {
+                String[] userData = line.split(",");
+                char type = userData[2].charAt(0);
+                LocalDate transactionDate = LocalDate.parse(userData[4], formatter);
+                if (type == transactionType && transactionDate.isAfter(startDate) && transactionDate.isBefore(endDate)) {
+                    lineCount++;
+                    if (lineCount >= startIndex && lineCount <= endIndex) {
+                        System.out.printf("|%-15s | %-15s | %-15s| %-7s | %-15s | %n", userData[0], userData[1], userData[2], userData[3], userData[4]);
+                    } else if (lineCount > endIndex) {
+                        break;
+                    }
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error reading transaction file: " + e.getMessage());
+        }
+        System.out.println(DIVIDER);
+        return lineCount;
     }
 
 }

@@ -2,6 +2,9 @@
 import java.util.Scanner;
 import java.util.InputMismatchException;
 import java.lang.NullPointerException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 public class Interpreter {
 
@@ -109,7 +112,7 @@ public class Interpreter {
                                             break;
                                         case 3:
                                             errorFlag = false;
-                                            System.out.println("Check Transaction History");
+                                            callTransactionHistory(scanner);
                                             break;
                                         case 4:
                                             errorFlag = false;
@@ -117,7 +120,6 @@ public class Interpreter {
                                             break;
                                         case 0:
                                             errorFlag = false;
-//                                        System.out.println("Exiting...");
                                             logout(scanner, loggedIn, adminFlag);
 
                                             break;
@@ -202,7 +204,7 @@ public class Interpreter {
         System.out.print("Enter your password: ");
         String password = scanner.nextLine();
 
-        String tempSave = User.login(username, password);
+        String tempSave = Client.login(username, password);
 
         // Check if login was successful
         if (tempSave != null) {
@@ -529,7 +531,7 @@ public class Interpreter {
         rewardCatalogue[0].listProducts();
 
         System.out.println("Current available points: " + identifier + "point(s)");
-        System.out.print("Enter RewardId (Enter[0] to Exit):");
+        System.out.print("Enter RewardId (Enter[0] to Back):");
 
         do {
             try {
@@ -537,17 +539,17 @@ public class Interpreter {
                 errorFlag = false;
                 if (choices < 0) {
                     System.out.println("Please enter valid input:");
-                    System.out.print("Enter RewardId (Enter[0] to Exit):");
+                    System.out.print("Enter RewardId (Enter[0] to Back):");
                     errorFlag = true;
                 } else if (choices > 0 && choices < 1001) {
                     System.out.println("Please enter valid rewardId(Exp: 1001):");
-                    System.out.print("Enter RewardId (Enter[0] to Exit):");
+                    System.out.print("Enter RewardId (Enter[0] to Back):");
                     errorFlag = true;
                 }
 
             } catch (InputMismatchException ex) {
                 System.out.println("Please enter valid input:");
-                System.out.print("Enter RewardId (Enter[0] to Exit):");
+                System.out.print("Enter RewardId (Enter[0] to Back):");
                 scanner.nextLine();
                 errorFlag = true;
             }
@@ -586,7 +588,7 @@ public class Interpreter {
         PointManagement pm = new PointManagement();
         pm.getClient(username[0]);
         System.out.println(pm.toString());
-       Policy.showExpired(username[0]);
+        Policy.showExpired(username[0]);
         System.out.println("1. View/Update Profile");
         System.out.println("0. Back");
         System.out.println("Enter your choice:");
@@ -990,6 +992,385 @@ public class Interpreter {
 
         if (policyChoice > 0) {
             Policy.setDayCount(policyChoice);
+        }
+    }
+
+    public static void callTransactionHistory(Scanner scanner) {
+        boolean errorFlag = false;
+        System.out.println(DIVIDER);
+        System.out.println("KnowledgeKash Admins > Transaction History");
+        System.out.println(DIVIDER);
+        int page = 1;
+        System.out.println("Page: " + page);
+        int lastRecord = TransactionHistory.listTransaction(page);
+        System.out.println("1. Next Page");
+        System.out.print(page == 1 ? "2. List by transaction type\n" : "2.Previous page\n");
+        System.out.print(page == 1 ? "3. List by date\n" : "3. List by transaction type\n");
+        System.out.print(page == 1 ? "4. List by transaction type and date\n" : "4. List by date\n");
+        System.out.print(page == 1 ? "5. Find transaction\n" : "5. List by transaction type and date\n");
+        System.out.print(page == 1 ? "" : "6. Find transaction\n");
+        System.out.println("0. Back");
+        System.out.println("Please enter choice: ");
+
+        do {
+            try {
+                int choice = scanner.nextInt();
+                switch (choice) {
+                    case 1:
+                        int count = (page) * 20 + 1;
+//                            System.err.println(count + ">>" + lastRecord);
+                        if (count > lastRecord) {
+                            System.out.println("This is the last page.");
+                            errorFlag = true;
+                            System.out.print("Enter your choice again: ");
+                        } else {
+                            errorFlag = false;
+                            page++;
+
+                        }
+                        break;
+                    case 2:
+                        if (page > 1) {
+                            page--;
+                            errorFlag = false;
+                        } else {
+                            callListTransactionInFilter('T');
+                            errorFlag = false;
+                        }
+                        break;
+                    case 3:
+                        if (page > 1) {
+                            callListTransactionInFilter('T');
+                            errorFlag = false;
+                        } else {
+                            callListTransactionInFilter('D');
+                            errorFlag = false;
+                        }
+                        break;
+                    case 4:
+                        if (page > 1) {
+                            callListTransactionInFilter('D');
+                            errorFlag = false;
+                        } else {
+                            callListTransactionInFilter('B');
+                            errorFlag = false;
+                        }
+                        break;
+                    case 5:
+                        if (page > 1) {
+                            callListTransactionInFilter('B');
+                            errorFlag = false;
+                        } else {
+                            callListTransactionInFilter('V');
+                            errorFlag = false;
+                        }
+                        break;
+                    case 6:
+                        if (page > 1) {
+                            callListTransactionInFilter('V');
+                            errorFlag = false;
+                        } else {
+                            System.out.println("Invalid choice. Please try again.");
+                            errorFlag = true;
+                        }
+                    case 0:
+                        errorFlag = false;
+                        break;
+                    default:
+                        System.out.println("Invalid choice. Please try again.");
+                        errorFlag = true;
+                        break;
+                }
+            } catch (InputMismatchException ex) {
+                System.out.println("Please enter valid input:");
+                scanner.nextLine();
+                errorFlag = true;
+            }
+        } while (errorFlag);
+
+    }
+
+    public static void callListTransactionInFilter(char listType) {
+        Scanner scanner = new Scanner(System.in);
+        String type;
+        char convertedType = 'E';
+        int datePage = 1;
+        boolean isValidFormat = false;
+        LocalDate startDate = null;
+        LocalDate endDate = null;
+        boolean errorFlag = false;
+        switch (listType) {
+            case 'T':
+                System.out.println(DIVIDER);
+                System.out.println("KnowledgeKash Admins > Transaction History > List by type");
+                System.out.println(DIVIDER);
+                int typePage = 1;
+                System.out.print("Enter type[E/R/P] OR [0] for back: ");
+                do {
+                    type = scanner.nextLine();
+                    type = type.toUpperCase();
+                    if (type.equals("E") || type.equals("R") || type.equals("P") || type.equals("0")) {
+                        if (!type.equals("0")) {
+                            convertedType = type.charAt(0);
+                        }
+                        errorFlag = false;
+                    } else {
+                        errorFlag = true;
+                        System.out.println("Please enter valid input.");
+                        System.out.print("Enter type[E/R/P] OR [0] for back: ");
+                    }
+                } while (errorFlag);
+                while (typePage > 0) {
+                    System.out.println("Page: " + typePage);
+                    int TypeLastRecord = TransactionHistory.listTransactionByType(convertedType, typePage);
+                    System.out.println("1. Next Page");
+                    System.out.print(typePage == 1 ? "0. Back\n" : "2.Previous page\n");
+                    do {
+                        try {
+                            int choice = scanner.nextInt();
+                            switch (choice) {
+                                case 1:
+                                    int count = (typePage) * 20 + 1;
+
+                                    if (count > TypeLastRecord) {
+                                        System.out.println("This is the last page.");
+                                        errorFlag = true;
+                                        System.out.print("Enter your choice again: ");
+                                    } else {
+                                        errorFlag = false;
+                                        typePage++;
+
+                                    }
+                                    break;
+                                case 2:
+                                    if (typePage > 1) {
+                                        typePage--;
+                                        errorFlag = false;
+                                    } else {
+                                        System.out.println("Invalid choice. Please try again.");
+                                        errorFlag = true;
+                                    }
+                                    break;
+
+                                case 0:
+                                    typePage = 0;
+                                    errorFlag = false;
+                                    break;
+                                default:
+                                    System.out.println("Invalid choice. Please try again.");
+                                    errorFlag = true;
+                                    break;
+                            }
+                        } catch (InputMismatchException ex) {
+                            System.out.println("Please enter valid input:");
+                            scanner.nextLine();
+                            errorFlag = true;
+                        }
+                    } while (errorFlag);
+                }
+                break;
+            case 'B':
+                System.out.println(DIVIDER);
+                System.out.println("KnowledgeKash Admins > Transaction History > List by date & type");
+                System.out.println(DIVIDER);
+                System.out.print("Enter type[E/R/P] OR [0] for back: ");
+                do {
+                    type = scanner.nextLine();
+                    type = type.toUpperCase();
+                    if (type.equals("E") || type.equals("R") || type.equals("P") || type.equals("0")) {
+                        if (!type.equals("0")) {
+                            convertedType = type.charAt(0);
+                        }
+                        errorFlag = false;
+                    } else {
+                        errorFlag = true;
+                        System.out.println("Please enter valid input.");
+                        System.out.print("Enter type[E/R/P] OR [0] for back: ");
+                    }
+                } while (errorFlag);
+                int dateTypePage = 1;
+                isValidFormat = false;
+
+                while (!isValidFormat) {
+                    System.out.print("Enter start date (yyyy-MM-dd) OR [0] for back: ");
+                    String startDateStr = scanner.nextLine();
+
+                    if (startDateStr.equals("0")) {
+                        // Handle back option
+                        System.out.println("Back option selected.");
+                        return;
+                    }
+
+                    try {
+                        startDate = LocalDate.parse(startDateStr, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                        isValidFormat = true;
+                    } catch (DateTimeParseException e) {
+                        System.out.println("Invalid date format. Please enter date in yyyy-MM-dd format.");
+                        isValidFormat = false;
+                        continue;
+                    }
+
+                    System.out.print("Enter end date (yyyy-MM-dd): ");
+                    String endDateStr = scanner.nextLine();
+
+                    try {
+                        endDate = LocalDate.parse(endDateStr, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                        isValidFormat = true;
+                    } catch (DateTimeParseException e) {
+                        System.out.println("Invalid date format. Please enter date in yyyy-MM-dd format.");
+                        isValidFormat = false;
+                        continue;
+                    }
+
+                    if (startDate.isAfter(endDate)) {
+                        System.out.println("Start date cannot be after end date. Please enter valid dates.");
+                        isValidFormat = false;
+                        continue;
+                    }
+                }
+                while (dateTypePage > 0) {
+                    System.out.println("Page: " + dateTypePage);
+                    int TypeDateLastRecord = TransactionHistory.listTransactionByTypeAndDate(convertedType, startDate, endDate, dateTypePage);
+                    System.out.println("1. Next Page");
+                    System.out.print(dateTypePage == 1 ? "0. Back\n" : "2.Previous page\n");
+                    do {
+                        try {
+                            int choice = scanner.nextInt();
+                            switch (choice) {
+                                case 1:
+                                    int count = (dateTypePage) * 20 + 1;
+
+                                    if (count > TypeDateLastRecord) {
+                                        System.out.println("This is the last page.");
+                                        errorFlag = true;
+                                        System.out.print("Enter your choice again: ");
+                                    } else {
+                                        errorFlag = false;
+                                        dateTypePage++;
+
+                                    }
+                                    break;
+                                case 2:
+                                    if (dateTypePage > 1) {
+                                        dateTypePage--;
+                                        errorFlag = false;
+                                    } else {
+                                        System.out.println("Invalid choice. Please try again.");
+                                        errorFlag = true;
+                                    }
+                                    break;
+
+                                case 0:
+                                    typePage = 0;
+                                    errorFlag = false;
+                                    break;
+                                default:
+                                    System.out.println("Invalid choice. Please try again.");
+                                    errorFlag = true;
+                                    break;
+                            }
+                        } catch (InputMismatchException ex) {
+                            System.out.println("Please enter valid input:");
+                            scanner.nextLine();
+                            errorFlag = true;
+                        }
+                    } while (errorFlag);
+                }
+                break;
+            case 'D':
+                System.out.println(DIVIDER);
+                System.out.println("KnowledgeKash Admins > Transaction History > List by date");
+                System.out.println(DIVIDER);
+                isValidFormat = false;
+                while (!isValidFormat) {
+                    System.out.print("Enter start date (yyyy-MM-dd) OR [0] for back: ");
+                    String startDateStr = scanner.nextLine();
+
+                    if (startDateStr.equals("0")) {
+                        // Handle back option
+                        System.out.println("Back option selected.");
+                        return;
+                    }
+
+                    try {
+                        startDate = LocalDate.parse(startDateStr, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                        isValidFormat = true;
+                    } catch (DateTimeParseException e) {
+                        System.out.println("Invalid date format. Please enter date in yyyy-MM-dd format.");
+                        isValidFormat = false;
+                        continue;
+                    }
+
+                    System.out.print("Enter end date (yyyy-MM-dd): ");
+                    String endDateStr = scanner.nextLine();
+
+                    try {
+                        endDate = LocalDate.parse(endDateStr, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                        isValidFormat = true;
+                    } catch (DateTimeParseException e) {
+                        System.out.println("Invalid date format. Please enter date in yyyy-MM-dd format.");
+                        isValidFormat = false;
+                        continue;
+                    }
+
+                    if (startDate.isAfter(endDate)) {
+                        System.out.println("Start date cannot be after end date. Please enter valid dates.");
+                        isValidFormat = false;
+                        continue;
+                    }
+                }
+                while (datePage > 0) {
+                    System.out.println("Page: " + datePage);
+                    int TypeLastRecord = TransactionHistory.listTransactionByDate(startDate, endDate, datePage);
+                    System.out.println("1. Next Page");
+                    System.out.print(datePage == 1 ? "0. Back\n" : "2.Previous page\n");
+                    do {
+                        try {
+                            int choice = scanner.nextInt();
+                            switch (choice) {
+                                case 1:
+                                    int count = (datePage) * 20 + 1;
+
+                                    if (count > TypeLastRecord) {
+                                        System.out.println("This is the last page.");
+                                        errorFlag = true;
+                                        System.out.print("Enter your choice again: ");
+                                    } else {
+                                        errorFlag = false;
+                                        datePage++;
+
+                                    }
+                                    break;
+                                case 2:
+                                    if (datePage > 1) {
+                                        datePage--;
+                                        errorFlag = false;
+                                    } else {
+                                        System.out.println("Invalid choice. Please try again.");
+                                        errorFlag = true;
+                                    }
+                                    break;
+
+                                case 0:
+                                    typePage = 0;
+                                    errorFlag = false;
+                                    break;
+                                default:
+                                    System.out.println("Invalid choice. Please try again.");
+                                    errorFlag = true;
+                                    break;
+                            }
+                        } catch (InputMismatchException ex) {
+                            System.out.println("Please enter valid input:");
+                            scanner.nextLine();
+                            errorFlag = true;
+                        }
+                    } while (errorFlag);
+                }
+                break;
+            case 'V':
+                break;
+
         }
     }
 }
