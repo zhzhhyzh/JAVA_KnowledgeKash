@@ -168,11 +168,13 @@ public class TransactionHistory {
         return lineCount;
     }
 
-    public static int listTransactionByDate(LocalDate startDate, LocalDate endDate, int page) {
+    public static int[] listTransactionByDate(LocalDate startDate, LocalDate endDate, int page) {
         int lineCount = 0;
         int startIndex = (page - 1) * TRANSACTIONS_PER_PAGE + 1;
         int endIndex = startIndex + TRANSACTIONS_PER_PAGE - 1;
-
+ int totalEarnedPoint = 0;
+            int totalRedemptedPoint = 0;
+            int totalExpiredPoint = 0;
         System.out.println(DIVIDER);
         System.out.printf("| %-15s | %-15s | %-15s | %-7s | %-15s |%n", "Transaction ID", "Username", "Type", "Points", "Date");
         System.out.println(DIVIDER);
@@ -183,12 +185,20 @@ public class TransactionHistory {
 
             while ((line = reader.readLine()) != null) {
                 String[] userData = line.split(",");
+                
                 LocalDateTime transactionDate = LocalDateTime.parse(userData[4], formatter);
 
                 LocalDate parsedTransactionDate = transactionDate.toLocalDate(); // Extract the date part
 
                 if (parsedTransactionDate.isAfter(startDate) && parsedTransactionDate.isBefore(endDate)) {
                     lineCount++;
+                     if (userData[2].equals("E")) {
+                        totalEarnedPoint += Integer.parseInt(userData[3].trim());
+                    } else if (userData[2].equals("R")) {
+                        totalRedemptedPoint += Integer.parseInt(userData[3].trim());
+                    } else if (userData[2].equals("P")) {
+                        totalExpiredPoint += Integer.parseInt(userData[3].trim());
+                    }
                     if (lineCount >= startIndex && lineCount <= endIndex) {
                         // Print transaction data in table format
                         System.out.printf("| %-15s | %-15s | %-10s | %-11s | %-19s |%n",
@@ -202,7 +212,8 @@ public class TransactionHistory {
             System.err.println("Error reading transaction file: " + e.getMessage());
         }
         System.out.println(DIVIDER);
-        return lineCount;
+        int[] returningData = {lineCount, totalEarnedPoint, totalRedemptedPoint, totalExpiredPoint};
+        return returningData;
     }
 
     public static int listTransactionByTypeAndDate(char transactionType, LocalDate startDate, LocalDate endDate, int page) {
