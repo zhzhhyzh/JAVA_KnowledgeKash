@@ -137,7 +137,7 @@ public class QuestionSelect extends QuestionRepository {
                             String answer = scanner.nextLine();
                             int holdPoint = pointDistribute(questionIndex, answer);
                             pointAccummulate += holdPoint;
-                            if(holdPoint== 0){
+                            if (holdPoint == 0) {
                                 System.out.println("No point will added due to invalid input.");
                             }
 
@@ -286,7 +286,7 @@ public class QuestionSelect extends QuestionRepository {
     }
 
     private boolean answerCompare(String answer) {
-        return answer.equals("A") || answer.equals("B") || answer.equals("C") || answer.equals("D");
+        return answer.equals("A") || answer.equals("B") || answer.equals("C") || answer.equals("D") || answer.equals("a") || answer.equals("b") || answer.equals("c") || answer.equals("d");
     }
 
     @Override
