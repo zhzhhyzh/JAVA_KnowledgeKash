@@ -573,7 +573,7 @@ public class Interpreter {
 
                 } catch (InputMismatchException ex) {
                     System.out.println("Please enter valid input:");
-                    System.out.print("Enter RewardId (Enter[0] to Back):");
+                    System.out.print("Enter Product Id (Enter[0] to Back):");
                     scanner.nextLine();
                     errorFlag = true;
                 }
@@ -1018,9 +1018,9 @@ public class Interpreter {
             System.out.println(DIVIDER);
             System.out.println("KnowledgeKash Menu > Answer Question");
             System.out.println(DIVIDER);
-            System.out.println("1. Question's answer by Selection");
-            System.out.println("2. Question's answer by Boolean");
-            System.out.println("3. Question's answer by String");
+            System.out.println("1. Question's answer by ABCD");
+            System.out.println("2. Question's answer by True/False");
+            System.out.println("3. Question's answer by Sentences");
             System.out.println("0. Back");
 
             System.out.print("Choose your selection: ");
@@ -1033,7 +1033,7 @@ public class Interpreter {
                             int questionCountS = qs.getTotalCount();
                             questionCountS = (int) (Math.random() * questionCountS + 1);
                             int qSPoint = qs.answerQuestion(questionCountS);
-
+                            System.out.println("Points earned: " + qSPoint);
                             pm.increasePoints(qSPoint);
                             TransactionHistory th1 = new TransactionHistory(username[0], 'E', qSPoint);
                             th1.writeTransactionToFile();
@@ -1044,6 +1044,8 @@ public class Interpreter {
                             int questionCountBoo = qb.getTotalCount();
                             questionCountBoo = (int) (Math.random() * questionCountBoo + 101);
                             int qBPoint = qb.answerQuestion(questionCountBoo);
+                            System.out.println("Points earned: " + qBPoint);
+
                             pm.increasePoints(qBPoint);
                             TransactionHistory th2 = new TransactionHistory(username[0], 'E', qBPoint);
                             th2.writeTransactionToFile();
@@ -1054,6 +1056,8 @@ public class Interpreter {
                             int questionCountStr = qStr.getTotalCount();
                             questionCountStr = (int) (Math.random() * questionCountStr + 201);
                             int qStrPoint = qStr.answerQuestion(questionCountStr);
+                            System.out.println("Points earned: " + qStrPoint);
+
                             pm.increasePoints(qStrPoint);
                             TransactionHistory th3 = new TransactionHistory(username[0], 'E', qStrPoint);
                             th3.writeTransactionToFile();
