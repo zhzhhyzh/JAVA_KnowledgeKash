@@ -42,7 +42,7 @@ public class Client extends User {
         super(username, password);
     }
 
-    public static String getValidationErrorMessage(String name, String password, String confirmPassword, char type) {
+    private static String getValidationErrorMessage(String name, String password, String confirmPassword, char type) {
         if (type == 'A') {
             String errorM = "";
             if (name == null || name.isEmpty()) {
