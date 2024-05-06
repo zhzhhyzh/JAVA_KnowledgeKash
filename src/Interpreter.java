@@ -590,6 +590,7 @@ public class Interpreter {
         System.out.println(pm.toString());
         Policy.showExpired(username[0]);
         System.out.println("1. View/Update Profile");
+        System.out.println("2. View Transaction");
         System.out.println("0. Back");
         System.out.println("Enter your choice:");
         int choice = 0;
@@ -599,7 +600,7 @@ public class Interpreter {
             try {
                 choice = scanner.nextInt();
                 errorFlag = false;
-                if (choice != 1 && choice != 0) {
+                if (choice != 1 && choice != 0 && choice != 2) {
                     errorFlag = true;
                     System.out.println("Invalid choice. Please enter again (1/0):");
                 }
@@ -611,6 +612,65 @@ public class Interpreter {
 
         if (choice == 1) {
             callManageProfile(scanner, username);
+        } else if (choice == 2) {
+            System.out.println(DIVIDER);
+            System.out.println("KnowledgeKash Menu > Profile > View Transaction History");
+            System.out.println(DIVIDER);
+            int viewPage = 1;
+            int viewLastRecord = TransactionHistory.findTransactionByUsername(username[0], viewPage);
+            System.out.println("1. Next Page");
+            System.out.print(viewPage == 1 ? "2. Generate Report\n" : "2.Previous page\n");
+            System.out.print(viewPage == 1 ? "0. Back\n" : "3. Generate Report\n");
+            System.out.print(viewPage == 1 ? "" : "0. Back\n");
+            System.out.print("Enter your choice: ");
+
+            do {
+                try {
+                    choice = scanner.nextInt();
+                    switch (choice) {
+                        case 1:
+                            int count = (viewPage) * 20 + 1;
+
+                            if (count > viewLastRecord) {
+                                System.out.println("This is the last page.");
+                                System.out.print("Enter your choice again: ");
+                            } else {
+                                viewPage++;
+
+                            }
+                            break;
+                        case 2:
+                            if (viewPage > 1) {
+                                viewPage--;
+                            } else {
+                                Report.findTransactionByUsername(username[0]);
+                                System.out.print("Enter your choice: ");
+
+                            }
+                            break;
+                        case 3:
+                            if (viewPage > 1) {
+                                Report.findTransactionByUsername(username[0]);
+                                System.out.print("Enter your choice: ");
+
+                            } else {
+                                System.out.println("Invalid choice. Please try again.");
+                            }
+                            break;
+
+                        case 0:
+                            viewPage = 0;
+                            break;
+                        default:
+                            System.out.println("Invalid choice. Please try again.");
+                            break;
+                    }
+                } catch (InputMismatchException ex) {
+                    System.out.println("Please enter valid input:");
+                    scanner.nextLine();
+
+                }
+            } while (viewPage > 0);
         }
     }
 
@@ -1334,7 +1394,7 @@ public class Interpreter {
                     int tempEarn = tempReturn[1];
                     int tempRedeem = tempReturn[2];
                     int tempExpired = tempReturn[3];
-                  
+
                     System.out.println("1. Next Page");
                     System.out.print(datePage == 1 ? "2. Generate Report\n" : "2.Previous page\n");
                     System.out.print(datePage == 1 ? "0. Back\n" : "3. Generate Report\n");
@@ -1425,7 +1485,7 @@ public class Interpreter {
                                 int choice = scanner.nextInt();
                                 switch (choice) {
                                     case 1:
-                                        int count = (datePage) * 20 + 1;
+                                        int count = (viewPage) * 20 + 1;
 
                                         if (count > viewLastRecord) {
                                             System.out.println("This is the last page.");
@@ -1436,7 +1496,7 @@ public class Interpreter {
                                         }
                                         break;
                                     case 2:
-                                        if (datePage > 1) {
+                                        if (viewPage > 1) {
                                             viewPage--;
                                         } else {
                                             Report.findTransactionByUsername(usernameInput);
@@ -1445,7 +1505,7 @@ public class Interpreter {
                                         }
                                         break;
                                     case 3:
-                                        if (datePage > 1) {
+                                        if (viewPage > 1) {
                                             Report.findTransactionByUsername(usernameInput);
                                             System.out.print("Enter your choice: ");
 
