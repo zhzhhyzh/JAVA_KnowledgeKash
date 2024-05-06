@@ -35,8 +35,10 @@ public class Interpreter {
             boolean menuError = false;
             boolean errorFlag = false;
             while (running) {
-                asciiArt();
                 do {
+                    clearScreen();
+                    asciiArt();
+                    System.out.print("\033[0m");
                     System.out.println(DIVIDER);
                     System.out.println("Welcome to KnowledgeKash");
                     System.out.println(DIVIDER);
@@ -104,23 +106,31 @@ public class Interpreter {
                                     switch (choice) {
                                         case 1:
                                             errorFlag = false;
+                                            clearScreen();
                                             callManageQuestion(scanner);
+                                            clearScreen();
                                             break;
                                         case 2:
                                             errorFlag = false;
+                                            clearScreen();
                                             callRewardsCatalogue(rewardCatalogue, scanner);
+                                            clearScreen();
                                             break;
                                         case 3:
                                             errorFlag = false;
+                                            clearScreen();
                                             callTransactionHistory(scanner);
+                                            clearScreen();
                                             break;
                                         case 4:
                                             errorFlag = false;
                                             callCheckUser(scanner);
+                                            clearScreen();
                                             break;
                                         case 0:
                                             errorFlag = false;
                                             logout(scanner, loggedIn, adminFlag);
+                                            clearScreen();
 
                                             break;
                                         default:
@@ -155,20 +165,26 @@ public class Interpreter {
                                     switch (choice) {
                                         case 1:
                                             errorFlag = false;
+                                            clearScreen();
                                             callAnswerQuestion(scanner, username);
+
                                             break;
                                         case 2:
                                             errorFlag = false;
-
+                                            clearScreen();
                                             callRedeemRewards(rewardCatalogue, scanner, username);
+
                                             break;
                                         case 3:
                                             errorFlag = false;
+                                            clearScreen();
                                             callProfile(username, scanner);
+                                            clearScreen();
                                             break;
                                         case 0:
                                             errorFlag = false;
                                             logout(scanner, loggedIn, adminFlag);
+                                            clearScreen();
 
                                             break;
                                         default:
@@ -218,9 +234,11 @@ public class Interpreter {
 
             clearScreen();
             loggedIn[0] = true;
+            clearScreen();
             System.out.println("Login successful! Welcome, " + tempSave + "!");
             return false;
         } else {
+            clearScreen();
             System.out.println("Login failed. Invalid username or password.");
             return true;
         }
@@ -250,6 +268,7 @@ public class Interpreter {
         }
         Client registeredClient = Client.register(username, password, confirmPassword, name, phoneNumber, email);
         if (registeredClient != null) {
+            clearScreen();
             System.out.println("Registration successful!");
             return false;
         } else {
@@ -273,6 +292,7 @@ public class Interpreter {
                     loggedIn[0] = false; // Set loggedIn to false
                     adminFlag[0] = false;
                     System.out.println("Logged out successfully.");
+                    clearScreen();
                     break;
                 case 2:
                     loggedIn[0] = true;
@@ -301,7 +321,7 @@ public class Interpreter {
         boolean errorFlag = false;
         boolean running = true;
         do {
-
+            clearScreen();
             System.out.println(DIVIDER);
             System.out.println("KnowledgeKash Admin > Manage Rewards");
             System.out.println(DIVIDER);
@@ -399,7 +419,7 @@ public class Interpreter {
             System.out.println(DIVIDER);
             System.out.println("KnowledgeKash Admin > Manage Rewards > Update Product");
             System.out.println(DIVIDER);
-            System.out.println("Please Enter rewardId:");
+            System.out.println("Please enter rewardId or [0] for Back:");
             int rewardId = scanner.nextInt();
             String showInfo = RewardCatalogue.viewProduct(rewardId);
             if (showInfo != null) {
@@ -488,12 +508,15 @@ public class Interpreter {
                         } else {
                             errorFlag = false;
                             page++;
+                            clearScreen();
 
                         }
                         break;
                     case 2:
                         if (page > 1) {
                             page--;
+                            clearScreen();
+
                             errorFlag = false;
                         } else {
                             managePolicy(scanner);
@@ -525,153 +548,162 @@ public class Interpreter {
         PointManagement pm = new PointManagement();
         pm.getClient(username[0]);
         int identifier = pm.getAvailablePoints();
-        System.out.println(DIVIDER);
-        System.out.println("KnowledgeKash Menu > Redeem Rewards");
-        System.out.println(DIVIDER);
-        rewardCatalogue[0].listProducts();
-
-        System.out.println("Current available points: " + identifier + "point(s)");
-        System.out.print("Enter RewardId (Enter[0] to Back):");
-
         do {
-            try {
-                choices = scanner.nextInt();
-                errorFlag = false;
-                if (choices < 0) {
+            System.out.println(DIVIDER);
+            System.out.println("KnowledgeKash Menu > Redeem Rewards");
+            System.out.println(DIVIDER);
+            rewardCatalogue[0].listProducts();
+
+            System.out.println("Current available points: " + identifier + "point(s)");
+            System.out.print("Enter RewardId (Enter[0] to Back):");
+
+            do {
+                try {
+                    choices = scanner.nextInt();
+                    errorFlag = false;
+                    if (choices < 0) {
+                        System.out.println("Please enter valid input:");
+                        System.out.print("Enter RewardId (Enter[0] to Back):");
+                        errorFlag = true;
+                    } else if (choices > 0 && choices < 1001) {
+                        System.out.println("Please enter valid rewardId(Exp: 1001):");
+                        System.out.print("Enter RewardId (Enter[0] to Back):");
+                        errorFlag = true;
+                    }
+
+                } catch (InputMismatchException ex) {
                     System.out.println("Please enter valid input:");
-                    System.out.print("Enter RewardId (Enter[0] to Back):");
-                    errorFlag = true;
-                } else if (choices > 0 && choices < 1001) {
-                    System.out.println("Please enter valid rewardId(Exp: 1001):");
-                    System.out.print("Enter RewardId (Enter[0] to Back):");
+                    System.out.print("Enter Product Id (Enter[0] to Back):");
+                    scanner.nextLine();
                     errorFlag = true;
                 }
 
-            } catch (InputMismatchException ex) {
-                System.out.println("Please enter valid input:");
-                System.out.print("Enter RewardId (Enter[0] to Back):");
-                scanner.nextLine();
-                errorFlag = true;
-            }
+            } while (errorFlag);
 
-        } while (errorFlag);
-
-        if (choices != 0) {
-            System.out.println(DIVIDER);
-            String showInfo = rewardCatalogue[0].viewProduct(choices);
-            if (showInfo != null) {
-                System.out.println("Are you sure to redeem?");
-                System.out.println("Type [1] is yes");
-                scanner.nextLine(); // Clear input
-                String responseGetter = scanner.nextLine();
-                if (responseGetter.equals("1")) {
-
-                    int tempInt = rewardCatalogue[0].getTempPoint();
-                    if (identifier < tempInt) {
-                        System.out.println("Point not enough to proceed.");
-                    } else {
-                        RewardRedemption.redeemProduct(choices);
-                        pm.decreasePoints(tempInt);
-                        TransactionHistory th = new TransactionHistory(username[0], 'R', tempInt);
-                        th.writeTransactionToFile();
-                        System.out.println("Current available point(s): " + pm.getAvailablePoints());
+            if (choices != 0) {
+                System.out.println(DIVIDER);
+                String showInfo = rewardCatalogue[0].viewProduct(choices);
+                if (showInfo != null) {
+                    System.out.println("Are you sure to redeem?");
+                    System.out.println("Type [1] is yes");
+                    scanner.nextLine(); // Clear input
+                    String responseGetter = scanner.nextLine();
+                    if (responseGetter.equals("1")) {
+                        int tempInt = rewardCatalogue[0].getTempPoint();
+                        if (identifier < tempInt) {
+                            clearScreen();
+                            System.out.println("Point not enough to proceed.");
+                        } else {
+                            clearScreen();
+                            RewardRedemption.redeemProduct(choices);
+                            pm.decreasePoints(tempInt);
+                            TransactionHistory th = new TransactionHistory(username[0], 'R', tempInt);
+                            th.writeTransactionToFile();
+                            System.out.println("Current available point(s): " + pm.getAvailablePoints());
+                        }
                     }
                 }
             }
-        }
+        } while (choices > 0);
     }
 
     public static void callProfile(String[] username, Scanner scanner) {
-        System.out.println(DIVIDER);
-        System.out.println("KnowledgeKash Menu > Profile");
-        System.out.println(DIVIDER);
-        PointManagement pm = new PointManagement();
-        pm.getClient(username[0]);
-        System.out.println(pm.toString());
-        Policy.showExpired(username[0]);
-        System.out.println("1. View/Update Profile");
-        System.out.println("2. View Transaction");
-        System.out.println("0. Back");
-        System.out.println("Enter your choice:");
         int choice = 0;
-        boolean errorFlag = false;
-
         do {
-            try {
-                choice = scanner.nextInt();
-                errorFlag = false;
-                if (choice != 1 && choice != 0 && choice != 2) {
-                    errorFlag = true;
-                    System.out.println("Invalid choice. Please enter again (1/0):");
-                }
-            } catch (InputMismatchException ex) {
-                System.out.println("Invalid Input. Please enter again (1/0):");
-                scanner.nextLine();
-            }
-        } while (errorFlag);
+            System.out.println(DIVIDER);
+            System.out.println("KnowledgeKash Menu > Profile");
+            System.out.println(DIVIDER);
+            PointManagement pm = new PointManagement();
+            pm.getClient(username[0]);
+            System.out.println(pm.toString());
+            Policy.showExpired(username[0]);
+            System.out.println("1. View/Update Profile");
+            System.out.println("2. View Transaction");
+            System.out.println("0. Back");
+            System.out.println("Enter your choice:");
 
-        if (choice == 1) {
-            callManageProfile(scanner, username);
-        } else if (choice == 2) {
-            System.out.println(DIVIDER);
-            System.out.println("KnowledgeKash Menu > Profile > View Transaction History");
-            System.out.println(DIVIDER);
-            int viewPage = 1;
-            int viewLastRecord = TransactionHistory.findTransactionByUsername(username[0], viewPage);
-            System.out.println("1. Next Page");
-            System.out.print(viewPage == 1 ? "2. Generate Report\n" : "2.Previous page\n");
-            System.out.print(viewPage == 1 ? "0. Back\n" : "3. Generate Report\n");
-            System.out.print(viewPage == 1 ? "" : "0. Back\n");
-            System.out.print("Enter your choice: ");
+            boolean errorFlag = false;
 
             do {
                 try {
                     choice = scanner.nextInt();
-                    switch (choice) {
-                        case 1:
-                            int count = (viewPage) * 20 + 1;
-
-                            if (count > viewLastRecord) {
-                                System.out.println("This is the last page.");
-                                System.out.print("Enter your choice again: ");
-                            } else {
-                                viewPage++;
-
-                            }
-                            break;
-                        case 2:
-                            if (viewPage > 1) {
-                                viewPage--;
-                            } else {
-                                Report.findTransactionByUsername(username[0]);
-                                System.out.print("Enter your choice: ");
-
-                            }
-                            break;
-                        case 3:
-                            if (viewPage > 1) {
-                                Report.findTransactionByUsername(username[0]);
-                                System.out.print("Enter your choice: ");
-
-                            } else {
-                                System.out.println("Invalid choice. Please try again.");
-                            }
-                            break;
-
-                        case 0:
-                            viewPage = 0;
-                            break;
-                        default:
-                            System.out.println("Invalid choice. Please try again.");
-                            break;
+                    errorFlag = false;
+                    if (choice != 1 && choice != 0 && choice != 2) {
+                        errorFlag = true;
+                        System.out.println("Invalid choice. Please enter again (1/0):");
                     }
                 } catch (InputMismatchException ex) {
-                    System.out.println("Please enter valid input:");
+                    System.out.println("Invalid Input. Please enter again (1/0):");
                     scanner.nextLine();
-
                 }
-            } while (viewPage > 0);
-        }
+            } while (errorFlag);
+
+            if (choice == 1) {
+                callManageProfile(scanner, username);
+                choice = 1;
+            } else if (choice == 2) {
+                clearScreen();
+                System.out.println(DIVIDER);
+                System.out.println("KnowledgeKash Menu > Profile > View Transaction History");
+                System.out.println(DIVIDER);
+                int viewPage = 1;
+                int viewLastRecord = TransactionHistory.findTransactionByUsername(username[0], viewPage);
+                System.out.println("1. Next Page");
+                System.out.print(viewPage == 1 ? "2. Generate Report\n" : "2.Previous page\n");
+                System.out.print(viewPage == 1 ? "0. Back\n" : "3. Generate Report\n");
+                System.out.print(viewPage == 1 ? "" : "0. Back\n");
+                System.out.print("Enter your choice: ");
+
+                do {
+                    try {
+                        choice = scanner.nextInt();
+                        switch (choice) {
+                            case 1:
+                                int count = (viewPage) * 20 + 1;
+
+                                if (count > viewLastRecord) {
+                                    System.out.println("This is the last page.");
+                                    System.out.print("Enter your choice again: ");
+                                } else {
+                                    viewPage++;
+                                    clearScreen();
+                                }
+                                break;
+                            case 2:
+                                if (viewPage > 1) {
+                                    viewPage--;
+                                    clearScreen();
+                                } else {
+                                    Report.findTransactionByUsername(username[0]);
+                                    System.out.print("Enter your choice: ");
+                                }
+                                break;
+                            case 3:
+                                if (viewPage > 1) {
+                                    Report.findTransactionByUsername(username[0]);
+                                    System.out.print("Enter your choice: ");
+
+                                } else {
+                                    System.out.println("Invalid choice. Please try again.");
+                                }
+                                break;
+
+                            case 0:
+                                viewPage = 0;
+                                break;
+                            default:
+                                System.out.println("Invalid choice. Please try again.");
+                                break;
+                        }
+                    } catch (InputMismatchException ex) {
+                        System.out.println("Please enter valid input:");
+                        scanner.nextLine();
+
+                    }
+                } while (viewPage > 0);
+                choice = 2;
+            }
+        } while (choice > 0);
     }
 
     public static void callManageProfile(Scanner scanner, String[] username) {
@@ -723,6 +755,7 @@ public class Interpreter {
                 phoneNumber = phoneNumber.isEmpty() ? client.getPhoneNumber() : phoneNumber;
                 email = email.isEmpty() ? client.getEmail() : email;
                 String password = client.getPassword();
+                clearScreen();
                 client.updateProfile(username[0], password, name, phoneNumber, email);
 
             } else if (choice == 2) {
@@ -734,6 +767,7 @@ public class Interpreter {
                 String newPsw = scanner.nextLine();
                 System.out.print("Enter again to confirm your password: ");
                 String conPsw = scanner.nextLine();
+                clearScreen();
                 client.updatePassword(username[0], oldPsw, newPsw, conPsw);
 
             }
@@ -792,24 +826,30 @@ public class Interpreter {
                             } else {
                                 errorFlag = false;
                                 page++;
-
+                                clearScreen();
                             }
+
                             break;
                         case 2:
                             if (page > 1) {
                                 page--;
                                 errorFlag = false;
+                                clearScreen();
                             } else {
+                                clearScreen();
                                 manageQuestion('A', scanner);
                                 errorFlag = false;
                             }
+
                             break;
                         case 3:
 
                             if (page > 1) {
+                                clearScreen();
                                 manageQuestion('A', scanner);
                                 errorFlag = false;
                             } else {
+                                clearScreen();
                                 manageQuestion('C', scanner);
                                 errorFlag = false;
                             }
@@ -818,9 +858,11 @@ public class Interpreter {
                         case 4:
 
                             if (page > 1) {
+                                clearScreen();
                                 manageQuestion('C', scanner);
                                 errorFlag = false;
                             } else {
+                                clearScreen();
                                 manageQuestion('D', scanner);
                                 errorFlag = false;
                             }
@@ -828,6 +870,7 @@ public class Interpreter {
                             break;
                         case 5:
                             if (page > 1) {
+                                clearScreen();
                                 manageQuestion('D', scanner);
                                 errorFlag = false;
                             } else {
@@ -967,68 +1010,74 @@ public class Interpreter {
     }
 
     public static void callAnswerQuestion(Scanner scanner, String[] username) {
+        int choice = 0;
         PointManagement pm = new PointManagement();
         pm.getClient(username[0]);
         boolean errorFlag = false;
-        System.out.println(DIVIDER);
-        System.out.println("KnowledgeKash Menu > Answer Question");
-        System.out.println(DIVIDER);
-        System.out.println("1. Question's answer by Selection");
-        System.out.println("2. Question's answer by Boolean");
-        System.out.println("3. Question's answer by String");
-        System.out.println("0. Back");
-
-        System.out.print("Choose your selection: ");
         do {
-            try {
-                int choice = scanner.nextInt();
-                switch (choice) {
-                    case 1:
-                        QuestionSelect qs = new QuestionSelect();
-                        int questionCountS = qs.getTotalCount();
-                        questionCountS = (int) (Math.random() * questionCountS + 1);
-                        int qSPoint = qs.answerQuestion(questionCountS);
+            System.out.println(DIVIDER);
+            System.out.println("KnowledgeKash Menu > Answer Question");
+            System.out.println(DIVIDER);
+            System.out.println("1. Question's answer by ABCD");
+            System.out.println("2. Question's answer by True/False");
+            System.out.println("3. Question's answer by Sentences");
+            System.out.println("0. Back");
 
-                        pm.increasePoints(qSPoint);
-                        TransactionHistory th1 = new TransactionHistory(username[0], 'E', qSPoint);
-                        th1.writeTransactionToFile();
-                        errorFlag = false;
-                        break;
-                    case 2:
-                        QuestionBoolean qb = new QuestionBoolean();
-                        int questionCountBoo = qb.getTotalCount();
-                        questionCountBoo = (int) (Math.random() * questionCountBoo + 101);
-                        int qBPoint = qb.answerQuestion(questionCountBoo);
-                        pm.increasePoints(qBPoint);
-                        TransactionHistory th2 = new TransactionHistory(username[0], 'E', qBPoint);
-                        th2.writeTransactionToFile();
-                        errorFlag = false;
-                        break;
-                    case 3:
-                        QuestionString qStr = new QuestionString();
-                        int questionCountStr = qStr.getTotalCount();
-                        questionCountStr = (int) (Math.random() * questionCountStr + 201);
-                        int qStrPoint = qStr.answerQuestion(questionCountStr);
-                        pm.increasePoints(qStrPoint);
-                        TransactionHistory th3 = new TransactionHistory(username[0], 'E', qStrPoint);
-                        th3.writeTransactionToFile();
-                        errorFlag = false;
-                        break;
-                    case 0:
-                        errorFlag = false;
-                        break;
-                    default:
-                        System.out.println("Invalid choice. Please try again.");
-                        errorFlag = true;
-                        break;
+            System.out.print("Choose your selection: ");
+            do {
+                try {
+                    choice = scanner.nextInt();
+                    switch (choice) {
+                        case 1:
+                            QuestionSelect qs = new QuestionSelect();
+                            int questionCountS = qs.getTotalCount();
+                            questionCountS = (int) (Math.random() * questionCountS + 1);
+                            int qSPoint = qs.answerQuestion(questionCountS);
+                            System.out.println("Points earned: " + qSPoint);
+                            pm.increasePoints(qSPoint);
+                            TransactionHistory th1 = new TransactionHistory(username[0], 'E', qSPoint);
+                            th1.writeTransactionToFile();
+                            errorFlag = false;
+                            break;
+                        case 2:
+                            QuestionBoolean qb = new QuestionBoolean();
+                            int questionCountBoo = qb.getTotalCount();
+                            questionCountBoo = (int) (Math.random() * questionCountBoo + 101);
+                            int qBPoint = qb.answerQuestion(questionCountBoo);
+                            System.out.println("Points earned: " + qBPoint);
+
+                            pm.increasePoints(qBPoint);
+                            TransactionHistory th2 = new TransactionHistory(username[0], 'E', qBPoint);
+                            th2.writeTransactionToFile();
+                            errorFlag = false;
+                            break;
+                        case 3:
+                            QuestionString qStr = new QuestionString();
+                            int questionCountStr = qStr.getTotalCount();
+                            questionCountStr = (int) (Math.random() * questionCountStr + 201);
+                            int qStrPoint = qStr.answerQuestion(questionCountStr);
+                            System.out.println("Points earned: " + qStrPoint);
+
+                            pm.increasePoints(qStrPoint);
+                            TransactionHistory th3 = new TransactionHistory(username[0], 'E', qStrPoint);
+                            th3.writeTransactionToFile();
+                            errorFlag = false;
+                            break;
+                        case 0:
+                            errorFlag = false;
+                            break;
+                        default:
+                            System.out.println("Invalid choice. Please try again.");
+                            errorFlag = true;
+                            break;
+                    }
+                } catch (InputMismatchException ex) {
+                    System.out.println("Please enter valid input:");
+                    scanner.nextLine();
+                    errorFlag = true;
                 }
-            } catch (InputMismatchException ex) {
-                System.out.println("Please enter valid input:");
-                scanner.nextLine();
-                errorFlag = true;
-            }
-        } while (errorFlag);
-
+            } while (errorFlag);
+        } while (choice > 0);
     }
 
     public static void managePolicy(Scanner scanner) {
@@ -1052,6 +1101,8 @@ public class Interpreter {
 
         if (policyChoice > 0) {
             Policy.setDayCount(policyChoice);
+            clearScreen();
+            System.out.println("Policy updated successful.");
         }
     }
 
@@ -1088,6 +1139,7 @@ public class Interpreter {
                             } else {
                                 errorFlag = false;
                                 page++;
+                                clearScreen();
 
                             }
                             break;
@@ -1095,41 +1147,69 @@ public class Interpreter {
                             if (page > 1) {
                                 page--;
                                 errorFlag = false;
+                                clearScreen();
                             } else {
+                                clearScreen();
                                 callListTransactionInFilter('V');
+                                clearScreen();
+
                                 errorFlag = false;
                             }
                             break;
                         case 3:
                             if (page > 1) {
+                                clearScreen();
                                 callListTransactionInFilter('V');
+                                clearScreen();
+
                                 errorFlag = false;
                             } else {
+                                clearScreen();
                                 callListTransactionInFilter('D');
+                                clearScreen();
+
                                 errorFlag = false;
                             }
                             break;
                         case 4:
                             if (page > 1) {
+                                clearScreen();
                                 callListTransactionInFilter('D');
+                                clearScreen();
+
                                 errorFlag = false;
                             } else {
+                                clearScreen();
+
                                 callListTransactionInFilter('T');
+                                clearScreen();
+
                                 errorFlag = false;
                             }
                             break;
                         case 5:
                             if (page > 1) {
+                                clearScreen();
+
                                 callListTransactionInFilter('T');
+                                clearScreen();
+
                                 errorFlag = false;
                             } else {
+                                clearScreen();
+
                                 callListTransactionInFilter('B');
+                                clearScreen();
+
                                 errorFlag = false;
                             }
                             break;
                         case 6:
                             if (page > 1) {
+                                clearScreen();
                                 callListTransactionInFilter('B');
+                                clearScreen();
+
                                 errorFlag = false;
                             } else {
                                 System.out.println("Invalid choice. Please try again.");
@@ -1205,6 +1285,7 @@ public class Interpreter {
                                     } else {
                                         errorFlag = false;
                                         typePage++;
+                                        clearScreen();
 
                                     }
                                     break;
@@ -1212,6 +1293,8 @@ public class Interpreter {
                                     if (typePage > 1) {
                                         typePage--;
                                         errorFlag = false;
+                                        clearScreen();
+
                                     } else {
                                         System.out.println("Invalid choice. Please try again.");
                                         errorFlag = true;
@@ -1315,12 +1398,15 @@ public class Interpreter {
                                     } else {
                                         errorFlag = false;
                                         dateTypePage++;
+                                        clearScreen();
 
                                     }
                                     break;
                                 case 2:
                                     if (dateTypePage > 1) {
                                         dateTypePage--;
+                                        clearScreen();
+
                                         errorFlag = false;
                                     } else {
                                         System.out.println("Invalid choice. Please try again.");
@@ -1414,12 +1500,15 @@ public class Interpreter {
                                     } else {
                                         errorFlag = false;
                                         datePage++;
+                                        clearScreen();
 
                                     }
                                     break;
                                 case 2:
                                     if (datePage > 1) {
                                         datePage--;
+                                        clearScreen();
+
                                         errorFlag = false;
                                     } else {
                                         errorFlag = false;
@@ -1492,12 +1581,15 @@ public class Interpreter {
                                             System.out.print("Enter your choice again: ");
                                         } else {
                                             viewPage++;
+                                            clearScreen();
 
                                         }
                                         break;
                                     case 2:
                                         if (viewPage > 1) {
                                             viewPage--;
+                                            clearScreen();
+
                                         } else {
                                             Report.findTransactionByUsername(usernameInput);
                                             System.out.print("Enter your choice: ");
