@@ -997,96 +997,100 @@ public class Interpreter {
 
     public static void callTransactionHistory(Scanner scanner) {
         boolean errorFlag = false;
-        System.out.println(DIVIDER);
-        System.out.println("KnowledgeKash Admins > Transaction History");
-        System.out.println(DIVIDER);
-        int page = 1;
-        System.out.println("Page: " + page);
-        int lastRecord = TransactionHistory.listTransaction(page);
-        System.out.println("1. Next Page");
-        System.out.print(page == 1 ? "2. List by transaction type\n" : "2.Previous page\n");
-        System.out.print(page == 1 ? "3. List by date\n" : "3. List by transaction type\n");
-        System.out.print(page == 1 ? "4. List by transaction type and date\n" : "4. List by date\n");
-        System.out.print(page == 1 ? "5. Find transaction\n" : "5. List by transaction type and date\n");
-        System.out.print(page == 1 ? "" : "6. Find transaction\n");
-        System.out.println("0. Back");
-        System.out.println("Please enter choice: ");
-
+        int choice = 0;
         do {
-            try {
-                int choice = scanner.nextInt();
-                switch (choice) {
-                    case 1:
-                        int count = (page) * 20 + 1;
-//                            System.err.println(count + ">>" + lastRecord);
-                        if (count > lastRecord) {
-                            System.out.println("This is the last page.");
-                            errorFlag = true;
-                            System.out.print("Enter your choice again: ");
-                        } else {
-                            errorFlag = false;
-                            page++;
+            System.out.println(DIVIDER);
+            System.out.println("KnowledgeKash Admins > Transaction History");
+            System.out.println(DIVIDER);
+            int page = 1;
+            System.out.println("Page: " + page);
+            int lastRecord = TransactionHistory.listTransaction(page);
+            System.out.println("1. Next Page");
+            System.out.print(page == 1 ? "2. List by transaction type\n" : "2.Previous page\n");
+            System.out.print(page == 1 ? "3. List by date\n" : "3. List by transaction type\n");
+            System.out.print(page == 1 ? "4. List by transaction type and date\n" : "4. List by date\n");
+            System.out.print(page == 1 ? "5. Find transaction\n" : "5. List by transaction type and date\n");
+            System.out.print(page == 1 ? "" : "6. Find transaction\n");
+            System.out.println("0. Back");
+            System.out.println("Please enter choice: ");
 
-                        }
-                        break;
-                    case 2:
-                        if (page > 1) {
-                            page--;
+            do {
+                try {
+                    choice = scanner.nextInt();
+                    switch (choice) {
+                        case 1:
+                            int count = (page) * 20 + 1;
+//                            System.err.println(count + ">>" + lastRecord);
+                            if (count > lastRecord) {
+                                System.out.println("This is the last page.");
+                                errorFlag = true;
+                                System.out.print("Enter your choice again: ");
+                            } else {
+                                errorFlag = false;
+                                page++;
+
+                            }
+                            break;
+                        case 2:
+                            if (page > 1) {
+                                page--;
+                                errorFlag = false;
+                            } else {
+                                callListTransactionInFilter('T');
+                                errorFlag = false;
+                            }
+                            break;
+                        case 3:
+                            if (page > 1) {
+                                callListTransactionInFilter('T');
+                                errorFlag = false;
+                            } else {
+                                callListTransactionInFilter('D');
+                                errorFlag = false;
+                            }
+                            break;
+                        case 4:
+                            if (page > 1) {
+                                callListTransactionInFilter('D');
+                                errorFlag = false;
+                            } else {
+                                callListTransactionInFilter('B');
+                                errorFlag = false;
+                            }
+                            break;
+                        case 5:
+                            if (page > 1) {
+                                callListTransactionInFilter('B');
+                                errorFlag = false;
+                            } else {
+                                callListTransactionInFilter('V');
+                                errorFlag = false;
+                            }
+                            break;
+                        case 6:
+                            if (page > 1) {
+                                callListTransactionInFilter('V');
+                                errorFlag = false;
+                            } else {
+                                System.out.println("Invalid choice. Please try again.");
+                                errorFlag = true;
+                            }
+                        case 0:
                             errorFlag = false;
-                        } else {
-                            callListTransactionInFilter('T');
-                            errorFlag = false;
-                        }
-                        break;
-                    case 3:
-                        if (page > 1) {
-                            callListTransactionInFilter('T');
-                            errorFlag = false;
-                        } else {
-                            callListTransactionInFilter('D');
-                            errorFlag = false;
-                        }
-                        break;
-                    case 4:
-                        if (page > 1) {
-                            callListTransactionInFilter('D');
-                            errorFlag = false;
-                        } else {
-                            callListTransactionInFilter('B');
-                            errorFlag = false;
-                        }
-                        break;
-                    case 5:
-                        if (page > 1) {
-                            callListTransactionInFilter('B');
-                            errorFlag = false;
-                        } else {
-                            callListTransactionInFilter('V');
-                            errorFlag = false;
-                        }
-                        break;
-                    case 6:
-                        if (page > 1) {
-                            callListTransactionInFilter('V');
-                            errorFlag = false;
-                        } else {
+                            break;
+                        default:
                             System.out.println("Invalid choice. Please try again.");
                             errorFlag = true;
-                        }
-                    case 0:
-                        errorFlag = false;
-                        break;
-                    default:
-                        System.out.println("Invalid choice. Please try again.");
-                        errorFlag = true;
-                        break;
+                            break;
+                    }
+                } catch (InputMismatchException ex) {
+                    System.out.println("Please enter valid input:");
+                    scanner.nextLine();
+                    errorFlag = true;
                 }
-            } catch (InputMismatchException ex) {
-                System.out.println("Please enter valid input:");
-                scanner.nextLine();
-                errorFlag = true;
-            }
-        } while (errorFlag);
+            } while (errorFlag);
+
+        } while (choice > 0);
 
     }
 
@@ -1180,6 +1184,8 @@ public class Interpreter {
                     if (type.equals("E") || type.equals("R") || type.equals("P") || type.equals("0")) {
                         if (!type.equals("0")) {
                             convertedType = type.charAt(0);
+                        }else{
+                            return;
                         }
                         errorFlag = false;
                     } else {
@@ -1196,8 +1202,6 @@ public class Interpreter {
                     String startDateStr = scanner.nextLine();
 
                     if (startDateStr.equals("0")) {
-                        // Handle back option
-                        System.out.println("Back option selected.");
                         return;
                     }
 
@@ -1261,7 +1265,7 @@ public class Interpreter {
                                     break;
 
                                 case 0:
-                                    typePage = 0;
+                                    dateTypePage = 0;
                                     errorFlag = false;
                                     break;
                                 default:
@@ -1352,7 +1356,7 @@ public class Interpreter {
                                     break;
 
                                 case 0:
-                                    typePage = 0;
+                                    datePage = 0;
                                     errorFlag = false;
                                     break;
                                 default:
@@ -1369,8 +1373,66 @@ public class Interpreter {
                 }
                 break;
             case 'V':
-                break;
+                boolean viewErrorFlag = false;
+                System.out.println(DIVIDER);
+                System.out.println("KnowledgeKash Admins > Transaction History > Find user by detail");
+                System.out.println(DIVIDER);
+                do {
+                    System.out.println("Enter username OR [0] for back: ");
+                    String usernameInput = scanner.nextLine();
+                    Client client = Client.getClient(usernameInput);
+                    int viewPage = 1;
+                    if (usernameInput.equals("0")) {
+                        errorFlag = false;
+                    } else if (client == null) {
+                        System.out.println("User not exist");
+                        errorFlag = true;
+                    } else {
+                        errorFlag = false;
 
+                        int viewLastRecord = TransactionHistory.findTransactionByUsername(usernameInput, viewPage);
+                        System.out.println("1. Next Page");
+                        System.out.print(datePage == 1 ? "0. Back\n" : "2.Previous page\n");
+                        do {
+                            try {
+                                int choice = scanner.nextInt();
+                                switch (choice) {
+                                    case 1:
+                                        int count = (datePage) * 20 + 1;
+
+                                        if (count > viewLastRecord) {
+                                            System.out.println("This is the last page.");
+                                            System.out.print("Enter your choice again: ");
+                                        } else {
+                                            viewPage++;
+
+                                        }
+                                        break;
+                                    case 2:
+                                        if (datePage > 1) {
+                                            viewPage--;
+                                        } else {
+                                            System.out.println("Invalid choice. Please try again.");
+                                        }
+                                        break;
+
+                                    case 0:
+                                        viewPage = 0;
+                                        break;
+                                    default:
+                                        System.out.println("Invalid choice. Please try again.");
+                                        break;
+                                }
+                            } catch (InputMismatchException ex) {
+                                System.out.println("Please enter valid input:");
+                                scanner.nextLine();
+                                errorFlag = true;
+                            }
+                        } while (viewPage > 0);
+                    }
+
+                } while (errorFlag);
+                break;
         }
     }
 }
