@@ -6,7 +6,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
-public class Interpreter {
+public class InteractionMenu {
 
     public static final String ANSI_RESET = "\u001B[0m";
     public static final String ANSI_RED = "\u001B[31m";
@@ -24,8 +24,6 @@ public class Interpreter {
         boolean[] loggedIn = {false};
         boolean[] adminFlag = {false};
         String[] username = new String[1];
-        Client[] realClient = new Client[1];
-        Admin realAdmin;
         RewardCatalogue[] rewardCatalogue = new RewardCatalogue[1];
         rewardCatalogue[0] = new RewardCatalogue();
 
