@@ -361,10 +361,12 @@ public class InteractionMenu {
                         default:
                             errorFlag = true;
                             System.out.println("Invalid choice. Please try again.");
+                            System.out.print("Enter your choice:");
                     }
                 } catch (InputMismatchException ex) {
                     System.out.println("Invalid input. Please try again.");
                     scanner.nextLine();
+                    System.out.print("Enter your choice:");
                     errorFlag = true;
                 }
             } while (errorFlag);
@@ -440,11 +442,11 @@ public class InteractionMenu {
                 do {
                     System.out.print("Stock: ");
                     stock = scanner.nextLine();
-                } while (!stock.isEmpty() && !isValidInteger(point));
+                } while (!stock.isEmpty() && !isValidInteger(stock));
                 name = name.isEmpty() ? RewardCatalogue.getTempName() : name;
                 description = description.isEmpty() ? RewardCatalogue.getTempDescription() : description;
                 int pointCost = point.isEmpty() ? RewardCatalogue.getTempPoint() : Integer.parseInt(point);
-                int stockAmount = point.isEmpty() ? RewardCatalogue.getTempStock() : Integer.parseInt(stock);
+                int stockAmount = stock.isEmpty() ? RewardCatalogue.getTempStock() : Integer.parseInt(stock);
                 RewardCatalogue.updateProduct(rewardId, name, description, pointCost, stockAmount);
             }
 
@@ -1121,7 +1123,7 @@ public class InteractionMenu {
             System.out.print(page == 1 ? "5. List by transaction type and date\n" : "5. List by transaction type");
             System.out.print(page == 1 ? "" : "6. List by transaction type and date\n");
             System.out.println("0. Back");
-            System.out.println("Please enter choice: ");
+            System.out.println("Enter your choice:");
 
             do {
                 try {
@@ -1211,6 +1213,7 @@ public class InteractionMenu {
                                 errorFlag = false;
                             } else {
                                 System.out.println("Invalid choice. Please try again.");
+                                System.out.print("Enter your choice:");
                                 errorFlag = true;
                             }
                         case 0:
@@ -1218,11 +1221,13 @@ public class InteractionMenu {
                             break;
                         default:
                             System.out.println("Invalid choice. Please try again.");
+                            System.out.print("Enter your choice:");
                             errorFlag = true;
                             break;
                     }
                 } catch (InputMismatchException ex) {
-                    System.out.println("Please enter valid input:");
+                    System.out.println("Invalid choice. Please try again.");
+                    System.out.print("Enter your choice:");
                     scanner.nextLine();
                     errorFlag = true;
                 }

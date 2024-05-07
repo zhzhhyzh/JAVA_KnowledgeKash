@@ -71,7 +71,7 @@ public class QuestionRepository {
                             if (i + 1 < userData.length) {
                                 int questionIndex = i - count;
                                 System.out.println("Question " + questionId + "." + questionIndex + ": " + userData[i]);
-                                System.out.println("Answer " + questionId + "." + questionIndex + ": " + userData[i + 1]);
+//                                System.out.println("Answer " + questionId + "." + questionIndex + ": " + userData[i + 1]);
                                 count++;
                             }
                         }
