@@ -264,9 +264,10 @@ public class InteractionMenu {
         if (phoneNumber.isEmpty()) {
             phoneNumber = null;
         }
+        clearScreen();
         Client registeredClient = Client.register(username, password, confirmPassword, name, phoneNumber, email);
         if (registeredClient != null) {
-            clearScreen();
+
             System.out.println("Registration successful!");
             return false;
         } else {

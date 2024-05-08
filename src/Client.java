@@ -42,10 +42,10 @@ public class Client extends User {
         super(username, password);
     }
 
-    private static String getValidationErrorMessage(String name, String password, String confirmPassword, char type) {
+    private static String getValidationErrorMessage(String username, String password, String confirmPassword, String name, char type) {
         if (type == 'A') {
             String errorM = "";
-            if (name == null || name.isEmpty()) {
+            if (username == null || username.isEmpty()) {
                 errorM += "Name is required.\n";
             }
             if (password == null || password.isEmpty()) {
@@ -58,6 +58,9 @@ public class Client extends User {
                 if (!password.equals(confirmPassword)) {
                     errorM += "Password and confirm password do not match.\n";
                 }
+            }
+            if (name == null || name.isEmpty()) {
+                errorM += "Name is required.\n";
             }
             if (!errorM.isEmpty()) {
                 return errorM;
@@ -111,7 +114,7 @@ public class Client extends User {
 
     public static Client register(String newUsername, String newPassword, String confirmedPassword, String newName, String newEmail, String newPhoneNumber) {
         // Validate input parameters
-        String errorMessage = getValidationErrorMessage(newUsername, newPassword, confirmedPassword, 'A');
+        String errorMessage = getValidationErrorMessage(newUsername, newPassword, confirmedPassword, newName, 'A');
         if (errorMessage == null) {
             try (BufferedReader reader = new BufferedReader(new FileReader(USER_FILE_PATH))) {
                 String line;
@@ -151,7 +154,7 @@ public class Client extends User {
 
     public boolean updateProfile(String username, String newPassword, String newName, String newPhoneNumber, String newEmail) {
         // Validate input parameters
-        String errorMessage = getValidationErrorMessage(username, newPassword, "", 'C');
+        String errorMessage = getValidationErrorMessage(username, newPassword, "",newName, 'C');
         if (errorMessage == null) {
             try (BufferedReader reader = new BufferedReader(new FileReader(USER_FILE_PATH)); BufferedWriter writer = new BufferedWriter(new FileWriter(USER_FILE_PATH + ".tmp"))) {
 
