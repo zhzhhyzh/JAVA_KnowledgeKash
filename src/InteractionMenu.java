@@ -104,7 +104,6 @@ public class InteractionMenu {
                                     switch (choice) {
                                         case 1:
                                             errorFlag = false;
-                                            clearScreen();
                                             callManageQuestion(scanner);
                                             clearScreen();
                                             break;
@@ -799,7 +798,12 @@ public class InteractionMenu {
     public static void callManageQuestion(Scanner scanner) {
         QuestionRepository qr = new QuestionRepository();
         int page = 1;
+        clearScreen();
+
+        System.out.println("\n".repeat(100)); // Print 50 newlines
+
         System.out.println(DIVIDER);
+
         System.out.println("KnowledgeKash Admin > Manage Question");
         System.out.println(DIVIDER);
 
@@ -830,6 +834,10 @@ public class InteractionMenu {
                                 errorFlag = false;
                                 page++;
                                 clearScreen();
+
+                                System.out.println("\n".repeat(100)); // Print 50 newlines
+                                System.out.println(DIVIDER);
+
                             }
 
                             break;
@@ -838,10 +846,14 @@ public class InteractionMenu {
                                 page--;
                                 errorFlag = false;
                                 clearScreen();
+
+                                System.out.println("\n".repeat(100)); // Print 50 newlines
+                                System.out.println(DIVIDER);
                             } else {
                                 clearScreen();
                                 manageQuestion('A', scanner);
                                 errorFlag = false;
+                                
                             }
 
                             break;

@@ -1,4 +1,5 @@
 
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -185,8 +186,12 @@ public class QuestionSelect extends QuestionRepository {
                     + "," + tempSave[16] + "," + tempSave[17] + "," + tempSave[18]
                     + "," + tempSave[19]);
             writer.newLine();
+            InteractionMenu.clearScreen();
+
+            System.out.println("\n".repeat(100)); // Print 50 newlines
 
             System.out.println("Question created successfully!");
+                        System.out.println(DIVIDER);
 
         } catch (IOException e) {
             System.err.println("Error writing to question file: " + e.getMessage());
@@ -249,7 +254,12 @@ public class QuestionSelect extends QuestionRepository {
             }
 
             if (!updated) {
+                 InteractionMenu.clearScreen();
+
+            System.out.println("\n".repeat(100)); // Print 50 newlines
+
                 System.err.println("Question not found.");
+                System.out.println(DIVIDER);
                 return false;
             }
         } catch (IOException e) {
@@ -276,8 +286,12 @@ public class QuestionSelect extends QuestionRepository {
                 System.err.println("Failed to replace the original file with the temporary file.");
                 return false;
             }
+ InteractionMenu.clearScreen();
+
+            System.out.println("\n".repeat(100)); // Print 50 newlines
 
             System.out.println("Question updated.");
+            System.out.println(DIVIDER);
             return true;
         } catch (Exception ex) {
             System.err.println("Error replacing files: " + ex.getMessage());
