@@ -420,7 +420,7 @@ public class InteractionMenu {
             System.out.println(DIVIDER);
             System.out.println("KnowledgeKash Admin > Manage Rewards > Update Product");
             System.out.println(DIVIDER);
-            System.out.println("Please enter rewardId or [0] for Back:");
+            System.out.println("Please enter Product ID or [0] for Back:");
             int rewardId = scanner.nextInt();
             String showInfo = RewardCatalogue.viewProduct(rewardId);
             if (showInfo != null) {
@@ -455,7 +455,7 @@ public class InteractionMenu {
             System.out.println(DIVIDER);
             System.out.println("KnowledgeKash Admin > Manage Rewards > Delete Product");
             System.out.println(DIVIDER);
-            System.out.println("Please Enter rewardId:");
+            System.out.println("Please Enter Product ID:");
             int rewardId = scanner.nextInt();
             String showInfo = RewardCatalogue.viewProduct(rewardId);
             if (showInfo != null) {
@@ -557,7 +557,7 @@ public class InteractionMenu {
             rewardCatalogue[0].listProducts();
 
             System.out.println("Current available points: " + identifier + "point(s)");
-            System.out.print("Enter RewardId (Enter[0] to Back):");
+            System.out.print("Enter Product ID (Enter[0] to Back):");
 
             do {
                 try {
@@ -565,11 +565,11 @@ public class InteractionMenu {
                     errorFlag = false;
                     if (choices < 0) {
                         System.out.println("Please enter valid input:");
-                        System.out.print("Enter RewardId (Enter[0] to Back):");
+                        System.out.print("Enter Product ID (Enter[0] to Back):");
                         errorFlag = true;
                     } else if (choices > 0 && choices < 1001) {
-                        System.out.println("Please enter valid rewardId(Exp: 1001):");
-                        System.out.print("Enter RewardId (Enter[0] to Back):");
+                        System.out.println("Please enter valid Product ID(Exp: 1001):");
+                        System.out.print("Enter Product ID (Enter[0] to Back):");
                         errorFlag = true;
                     }
 

@@ -84,6 +84,15 @@ public class Policy {
                 String[] userData = firstLine.split(",");
                 if (userData.length > 8) {
                     dayCount = Integer.parseInt(userData[8]);
+                    System.err.println("Daycount hereee>>>>>" + dayCount);
+//                    System.err.println("Daycount hereee>>>>>" + userData[0]);
+//                    System.err.println("Daycount hereee>>>>>" + userData[1]);
+//                    System.err.println("Daycount hereee>>>>>" + userData[2]);
+//                    System.err.println("Daycount hereee>>>>>" + userData[3]);
+//
+//                    System.err.println("Daycount hereee>>>>>" + userData[8]);
+//                    System.err.println("Daycount hereee>>>>>" + userData[9]); testing purpose
+
                     return Integer.parseInt(userData[8]);
                 } else {
                     System.err.println("Invalid format in user file: Missing field at index 8");
