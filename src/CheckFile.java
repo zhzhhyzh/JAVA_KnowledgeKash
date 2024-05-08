@@ -108,9 +108,19 @@ public class CheckFile {
             + ",7. Do you feel your work contributes to the overall goals of the organization?,(T) True  (F) False"
             + ",8. Do you have access to necessary resources to do your job effectively?,(T) True  (F) False"
             + ",9. Do you feel your company prioritizes employee well-being?,(T) True  (F) False"
-            + ",10. Do you see opportunities for advancement within your organization?,(T) True  (F) False\n";
+            + ",10. Do you see opportunities for advancement within your organization?,(T) True  (F) False\n"
+            + "203,1. What is a favorite childhood memory that still makes you smile?,"
+            + ",2. Can you share a personal goal you've recently set for yourself?,"
+            + ",3. Describe a moment when you felt deeply connected to nature.,"
+            + ",4. Share a piece of advice you would give to your younger self. ,"
+            + ",5. Reflect on a time when you felt inspired by someone or something.,"
+            + ",6. What is a small act of kindness you've witnessed recently?,"
+            + ",7. Describe a place you consider to be your personal sanctuary.,"
+            + ",8. Share a hobby or interest you've recently discovered or rediscovered.,"
+            + ",9. What is something you're grateful for in your life right now?,"
+            + ",10. Can you share a quote or saying that motivates or inspires you?,\n";
+    //check user file, if file not exist and create file only return true, else will be false
 
-//check user file, if file not exist and create file only return true, else will be false
     public static boolean checkUserFile() {
         File file = new File(USER_FILE_PATH);
         if (!file.exists()) {
