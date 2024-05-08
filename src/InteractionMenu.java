@@ -546,11 +546,11 @@ public class InteractionMenu {
     public static void callRedeemRewards(RewardCatalogue[] rewardCatalogue, Scanner scanner, String[] username) {
         boolean errorFlag = false;
         int choices = 0;
-        PointManagement pm = new PointManagement();
-        pm.getClient(username[0]);
-       
+
         do {
-             int identifier = pm.getAvailablePoints();
+            PointManagement pm = new PointManagement();
+            pm.getClient(username[0]);
+            int identifier = pm.getAvailablePoints();
             System.out.println(DIVIDER);
             System.out.println("KnowledgeKash Menu > Redeem Rewards");
             System.out.println(DIVIDER);
@@ -601,6 +601,7 @@ public class InteractionMenu {
                             pm.decreasePoints(tempInt);
                             TransactionHistory th = new TransactionHistory(username[0], 'R', tempInt);
                             th.writeTransactionToFile();
+                            pm.getClient(username[0]);
                             System.out.println("Current available point(s): " + pm.getAvailablePoints());
                         }
                     }
