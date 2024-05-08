@@ -623,7 +623,7 @@ public class InteractionMenu {
             System.out.println("1. View/Update Profile");
             System.out.println("2. View Transaction");
             System.out.println("0. Back");
-            System.out.println("Enter your choice:");
+            System.out.print("Enter your choice:");
 
             boolean errorFlag = false;
 

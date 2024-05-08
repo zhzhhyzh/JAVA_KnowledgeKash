@@ -131,8 +131,9 @@ public class QuestionSelect extends QuestionRepository {
                         if (i + 1 < userData.length) {
                             System.out.println("Question" + (i - count) + ": " + userData[i]);
                             System.out.println("Answer for question" + (i - count) + ": " + userData[i + 1]);
-                            count++;
+
                             int questionIndex = i - count;
+                            count++;
                             System.out.print("Enter your answer: ");
                             String answer = scanner.nextLine();
                             int holdPoint = pointDistribute(questionIndex, answer);
