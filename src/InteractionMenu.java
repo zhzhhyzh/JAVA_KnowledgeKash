@@ -548,8 +548,9 @@ public class InteractionMenu {
         int choices = 0;
         PointManagement pm = new PointManagement();
         pm.getClient(username[0]);
-        int identifier = pm.getAvailablePoints();
+       
         do {
+             int identifier = pm.getAvailablePoints();
             System.out.println(DIVIDER);
             System.out.println("KnowledgeKash Menu > Redeem Rewards");
             System.out.println(DIVIDER);
