@@ -801,7 +801,7 @@ public class InteractionMenu {
         clearScreen();
 
         System.out.println("\n".repeat(100)); // Print 50 newlines
-        
+
         System.out.println(DIVIDER);
 
         System.out.println("KnowledgeKash Admin > Manage Question");
@@ -834,6 +834,10 @@ public class InteractionMenu {
                                 errorFlag = false;
                                 page++;
                                 clearScreen();
+
+                                System.out.println("\n".repeat(100)); // Print 50 newlines
+                                System.out.println(DIVIDER);
+
                             }
 
                             break;
@@ -842,10 +846,14 @@ public class InteractionMenu {
                                 page--;
                                 errorFlag = false;
                                 clearScreen();
+
+                                System.out.println("\n".repeat(100)); // Print 50 newlines
+                                System.out.println(DIVIDER);
                             } else {
                                 clearScreen();
                                 manageQuestion('A', scanner);
                                 errorFlag = false;
+                                
                             }
 
                             break;
