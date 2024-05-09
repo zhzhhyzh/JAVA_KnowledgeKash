@@ -20,6 +20,9 @@ public class InteractionMenu {
     private static final int TRANSACTIONS_PER_PAGE = 20;
     private static final String TRANSACTION_FILE_PATH = "transactionHistory.txt";
     public static final String QUES_FILE_PATH = "question.txt";
+    private static final String PROD_FILE_PATH = "product.txt";
+    private static final String USER_FILE_PATH = "user.txt";
+
     public static final String DIVIDER = "=====================================================================";
     private static final String DIVIDER2 = "--------------------------------------------------------------------------------------";
 
@@ -268,7 +271,7 @@ public class InteractionMenu {
             phoneNumber = null;
         }
         clearScreen();
-        Client registeredClient = Client.register(username, password, confirmPassword, name, phoneNumber, email);
+        Client registeredClient = Client.register(username, password, confirmPassword, name, phoneNumber, email, USER_FILE_PATH);
         if (registeredClient != null) {
 
             System.out.println("Registration successful!");
@@ -327,7 +330,7 @@ public class InteractionMenu {
             System.out.println(DIVIDER);
             System.out.println("KnowledgeKash Admin > Manage Rewards");
             System.out.println(DIVIDER);
-            rewardCatalogue[0].listProducts();
+            rewardCatalogue[0].listProducts(PROD_FILE_PATH);
             System.out.println("1. Add Rewards");
             System.out.println("2. Update Rewards");
             System.out.println("3. Delete Rewards");
@@ -417,7 +420,7 @@ public class InteractionMenu {
                 }
             } while (errorFlag);
 
-            RewardCatalogue.addProduct(name, description, point, stock);
+            RewardCatalogue.addProduct(name, description, point, stock, PROD_FILE_PATH);
 
         } else if (actType == 'C') {
             System.out.println(DIVIDER);
@@ -425,7 +428,7 @@ public class InteractionMenu {
             System.out.println(DIVIDER);
             System.out.println("Please enter Product ID or [0] for Back:");
             int rewardId = scanner.nextInt();
-            String showInfo = RewardCatalogue.viewProduct(rewardId);
+            String showInfo = RewardCatalogue.viewProduct(rewardId, PROD_FILE_PATH);
             if (showInfo != null) {
                 scanner.nextLine();//Clear input
                 System.out.println(showInfo);
@@ -451,7 +454,7 @@ public class InteractionMenu {
                 description = description.isEmpty() ? RewardCatalogue.getTempDescription() : description;
                 int pointCost = point.isEmpty() ? RewardCatalogue.getTempPoint() : Integer.parseInt(point);
                 int stockAmount = stock.isEmpty() ? RewardCatalogue.getTempStock() : Integer.parseInt(stock);
-                RewardCatalogue.updateProduct(rewardId, name, description, pointCost, stockAmount);
+                RewardCatalogue.updateProduct(rewardId, name, description, pointCost, stockAmount, PROD_FILE_PATH);
             }
 
         } else {
@@ -460,7 +463,7 @@ public class InteractionMenu {
             System.out.println(DIVIDER);
             System.out.println("Please Enter Product ID:");
             int rewardId = scanner.nextInt();
-            String showInfo = RewardCatalogue.viewProduct(rewardId);
+            String showInfo = RewardCatalogue.viewProduct(rewardId, PROD_FILE_PATH);
             if (showInfo != null) {
                 scanner.nextLine(); //Clear input
                 System.out.println(DIVIDER);
@@ -468,7 +471,7 @@ public class InteractionMenu {
                 System.out.println("Type [1] is yes");
                 String responseGetter = scanner.nextLine();
                 if (responseGetter.equals("1")) {
-                    RewardCatalogue.deleteProduct(rewardId);
+                    RewardCatalogue.deleteProduct(rewardId, PROD_FILE_PATH);
                 }
             }
         }
@@ -493,7 +496,7 @@ public class InteractionMenu {
         boolean errorFlag = false;
         while (page >= 1) {
             System.out.println("Page: " + page);
-            lastRecord = Admin.listUsers(page);
+            lastRecord = Admin.listUsers(page, USER_FILE_PATH);
             System.out.println("1. Next Page");
             System.out.print(page == 1 ? "" : "2. Previous Page\n");
             System.out.print(page == 1 ? "2. Update Policy\n" : "3. Update Policy\n");
@@ -557,7 +560,7 @@ public class InteractionMenu {
             System.out.println(DIVIDER);
             System.out.println("KnowledgeKash Menu > Redeem Rewards");
             System.out.println(DIVIDER);
-            rewardCatalogue[0].listProducts();
+            rewardCatalogue[0].listProducts(PROD_FILE_PATH);
 
             System.out.println("Current available points: " + identifier + "point(s)");
             System.out.print("Enter Product ID (Enter[0] to Back):");
@@ -587,20 +590,20 @@ public class InteractionMenu {
 
             if (choices != 0) {
                 System.out.println(DIVIDER);
-                String showInfo = rewardCatalogue[0].viewProduct(choices);
+                String showInfo = RewardCatalogue.viewProduct(choices, PROD_FILE_PATH);
                 if (showInfo != null) {
                     System.out.println("Are you sure to redeem?");
                     System.out.println("Type [1] is yes");
                     scanner.nextLine(); // Clear input
                     String responseGetter = scanner.nextLine();
                     if (responseGetter.equals("1")) {
-                        int tempInt = rewardCatalogue[0].getTempPoint();
+                        int tempInt = RewardCatalogue.getTempPoint();
                         if (identifier < tempInt) {
                             clearScreen();
                             System.out.println("Point not enough to proceed.");
                         } else {
                             clearScreen();
-                            RewardRedemption.redeemProduct(choices);
+                            RewardRedemption.redeemProduct(choices, PROD_FILE_PATH);
                             pm.decreasePoints(tempInt);
                             TransactionHistory th = new TransactionHistory(username[0], 'R', tempInt);
                             th.writeTransactionToFile(TRANSACTION_FILE_PATH);
@@ -729,7 +732,7 @@ public class InteractionMenu {
             System.out.println(DIVIDER);
             System.out.println("KnowledgeKash Menu > Profile > Manage Profile");
             System.out.println(DIVIDER);
-            Client client = Client.getClient(username[0]);
+            Client client = Client.getClient(username[0], USER_FILE_PATH);
             System.out.println(client.toString());
 
 //            try{
@@ -772,7 +775,7 @@ public class InteractionMenu {
                 email = email.isEmpty() ? client.getEmail() : email;
                 String password = client.getPassword();
                 clearScreen();
-                client.updateProfile(username[0], password, name, phoneNumber, email);
+                client.updateProfile(username[0], password, name, phoneNumber, email, USER_FILE_PATH);
 
             } else if (choice == 2) {
                 scanner.nextLine();
@@ -784,19 +787,18 @@ public class InteractionMenu {
                 System.out.print("Enter again to confirm your password: ");
                 String conPsw = scanner.nextLine();
                 clearScreen();
-                client.updatePassword(username[0], oldPsw, newPsw, conPsw);
+                client.updatePassword(username[0], oldPsw, newPsw, conPsw, USER_FILE_PATH);
 
             }
         }
     }
 
     public static boolean checkFileIndicator() {
-        //Check and create file
-        CheckFile checkfile = new CheckFile();
-        return checkfile.checkUserFile()
-                && checkfile.checkTransactionFile()
-                && checkfile.checkProdFile()
-                && checkfile.checkQuesFile();
+
+        return CheckFile.checkUserFile(USER_FILE_PATH)
+                && CheckFile.checkTransactionFile(TRANSACTION_FILE_PATH)
+                && CheckFile.checkProdFile(PROD_FILE_PATH)
+                && CheckFile.checkQuesFile(QUES_FILE_PATH);
     }
 
     public static void asciiArt() {
@@ -1625,7 +1627,7 @@ public class InteractionMenu {
                 do {
                     System.out.println("Enter username OR [0] for back: ");
                     String usernameInput = scanner.nextLine();
-                    Client client = Client.getClient(usernameInput);
+                    Client client = Client.getClient(usernameInput, USER_FILE_PATH);
                     int viewPage = 1;
                     if (usernameInput.equals("0")) {
                         errorFlag = false;

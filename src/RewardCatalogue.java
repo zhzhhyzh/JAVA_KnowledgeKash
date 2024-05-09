@@ -6,7 +6,6 @@ public class RewardCatalogue {
 
     private static final String DELIMITER = ",";
     private static final String DIVIDER = "-------------------------------------------------------------------------------------------";
-    private static final String PROD_FILE_PATH = "product.txt";
     private static ArrayList<Integer> rewardId = new ArrayList<>();
     private static ArrayList<String> name = new ArrayList<>();
     private static ArrayList<String> description = new ArrayList<>();
@@ -24,7 +23,7 @@ public class RewardCatalogue {
     }
 
     private static void loadProductsFromFile() {
-        try (BufferedReader reader = new BufferedReader(new FileReader(PROD_FILE_PATH))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("question.txt"))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] data = line.split(",");
@@ -45,15 +44,15 @@ public class RewardCatalogue {
         }
     }
 
-    public static void addProduct(String productName, String productDescription, int cost, int productStock) {
-        int id = getRunningRewardId() + 1;
+    public static void addProduct(String productName, String productDescription, int cost, int productStock, String fileName) {
+        int id = getRunningRewardId(fileName) + 1;
         rewardId.add(id);
         name.add(productName);
         description.add(productDescription);
         pointCost.add(cost);
         stock.add(productStock);
 
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(PROD_FILE_PATH, true))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true))) {
             writer.write(String.format("%d,%s,%s,%d,%d%n", id, productName, productDescription, cost, productStock));
         } catch (IOException e) {
             System.err.println("Error adding product to file: " + e.getMessage());
@@ -61,8 +60,8 @@ public class RewardCatalogue {
         System.out.println("Product added successfully with ID: " + id);
     }
 
-    public static void updateProduct(int productId, String newName, String newDescription, int newPointCost, int newStock) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(PROD_FILE_PATH)); BufferedWriter writer = new BufferedWriter(new FileWriter(PROD_FILE_PATH + ".tmp"))) {
+    public static void updateProduct(int productId, String newName, String newDescription, int newPointCost, int newStock, String fileName) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName)); BufferedWriter writer = new BufferedWriter(new FileWriter(fileName + ".tmp"))) {
 
             String line;
             boolean updated = false;
@@ -98,8 +97,8 @@ public class RewardCatalogue {
 
         // Replace the original file with the temporary file
         try {
-            File originalFile = new File(PROD_FILE_PATH);
-            File tempFile = new File(PROD_FILE_PATH + ".tmp");
+            File originalFile = new File(fileName);
+            File tempFile = new File(fileName + ".tmp");
 
             if (!tempFile.exists() || !tempFile.canRead()) {
                 System.err.println("Temporary file is missing or cannot be read.");
@@ -120,8 +119,8 @@ public class RewardCatalogue {
 
     }
 
-    public static void deleteProduct(int rewardId) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(PROD_FILE_PATH)); BufferedWriter writer = new BufferedWriter(new FileWriter(PROD_FILE_PATH + ".tmp"))) {
+    public static void deleteProduct(int rewardId, String fileName) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName)); BufferedWriter writer = new BufferedWriter(new FileWriter(fileName + ".tmp"))) {
             String line;
             boolean found = false;
 
@@ -147,8 +146,8 @@ public class RewardCatalogue {
             System.err.println("Error reading question file: " + e.getMessage());
         }
         try {
-            File originalFile = new File(PROD_FILE_PATH);
-            File tempFile = new File(PROD_FILE_PATH + ".tmp");
+            File originalFile = new File(fileName);
+            File tempFile = new File(fileName + ".tmp");
 
             if (tempFile.exists() && tempFile.canRead() && originalFile.delete()) {
                 if (!tempFile.renameTo(originalFile)) {
@@ -171,7 +170,7 @@ public class RewardCatalogue {
         return -1;
     }
 
-    public void listProducts() {
+    public void listProducts(String fileName) {
         if (itemCount == 0) {
             System.out.println("No products available.");
             return;
@@ -183,7 +182,7 @@ public class RewardCatalogue {
                 "Product ID", "Name", "Description", "Point Cost", "Stock");
         System.out.println(DIVIDER);
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(PROD_FILE_PATH))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] data = line.split(",");
@@ -232,8 +231,8 @@ public class RewardCatalogue {
         return tempStock;
     }
 
-    public static String viewProduct(int productId) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(PROD_FILE_PATH))) {
+    public static String viewProduct(int productId, String fileName) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
             String line;
 
             while ((line = reader.readLine()) != null) {
@@ -267,8 +266,8 @@ public class RewardCatalogue {
         }
     }
 
-    public void updateProductStock(int productId, int change) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(PROD_FILE_PATH)); BufferedWriter writer = new BufferedWriter(new FileWriter(PROD_FILE_PATH + ".tmp"))) {
+    public void updateProductStock(int productId, int change, String fileName) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName)); BufferedWriter writer = new BufferedWriter(new FileWriter(fileName + ".tmp"))) {
 
             String line;
             while ((line = reader.readLine()) != null) {
@@ -287,8 +286,8 @@ public class RewardCatalogue {
 
         // Replace the original file with the temporary file
         try {
-            File originalFile = new File(PROD_FILE_PATH);
-            File tempFile = new File(PROD_FILE_PATH + ".tmp");
+            File originalFile = new File(fileName);
+            File tempFile = new File(fileName + ".tmp");
 
             if (!tempFile.exists() || !tempFile.canRead()) {
                 System.err.println("Temporary file is missing or cannot be read.");
@@ -307,14 +306,13 @@ public class RewardCatalogue {
         }
     }
 
-   
     public boolean productExists(int productId) {
         return findProductIndex(productId) != -1;
     }
 
-    private static int getRunningRewardId() {
+    private static int getRunningRewardId(String fileName) {
         int tempRewardId = 1001;
-        try (BufferedReader reader = new BufferedReader(new FileReader(PROD_FILE_PATH))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] userData = line.split(",", -1);

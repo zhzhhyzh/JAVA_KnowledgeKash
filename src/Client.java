@@ -13,7 +13,6 @@ public class Client extends User {
     protected String email;
 
     private static final String DELIMITER = ",";
-    private static final String USER_FILE_PATH = "user.txt";
 
     public Client() {
     }
@@ -112,11 +111,11 @@ public class Client extends User {
         this.email = email;
     }
 
-    public static Client register(String newUsername, String newPassword, String confirmedPassword, String newName, String newEmail, String newPhoneNumber) {
+    public static Client register(String newUsername, String newPassword, String confirmedPassword, String newName, String newEmail, String newPhoneNumber, String fileName) {
         // Validate input parameters
         String errorMessage = getValidationErrorMessage(newUsername, newPassword, confirmedPassword, newName, 'A');
         if (errorMessage == null) {
-            try (BufferedReader reader = new BufferedReader(new FileReader(USER_FILE_PATH))) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
                 String line;
                 boolean usernameExists = false;
                 while ((line = reader.readLine()) != null) {
@@ -131,7 +130,7 @@ public class Client extends User {
                     }
                 }
                 if (!usernameExists) {
-                    try (BufferedWriter writer = new BufferedWriter(new FileWriter(USER_FILE_PATH, true))) {
+                    try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true))) {
                         String WriteUserData = String.join(DELIMITER,
                                 newUsername, newPassword, newName, newEmail,
                                 newPhoneNumber, "false", "0", "0", "0", null);
@@ -152,11 +151,11 @@ public class Client extends User {
         return null;
     }
 
-    public boolean updateProfile(String username, String newPassword, String newName, String newPhoneNumber, String newEmail) {
+    public boolean updateProfile(String username, String newPassword, String newName, String newPhoneNumber, String newEmail, String fileName) {
         // Validate input parameters
         String errorMessage = getValidationErrorMessage(username, newPassword, "",newName, 'C');
         if (errorMessage == null) {
-            try (BufferedReader reader = new BufferedReader(new FileReader(USER_FILE_PATH)); BufferedWriter writer = new BufferedWriter(new FileWriter(USER_FILE_PATH + ".tmp"))) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(fileName)); BufferedWriter writer = new BufferedWriter(new FileWriter(fileName + ".tmp"))) {
 
                 String line;
                 boolean updated = false;
@@ -200,8 +199,8 @@ public class Client extends User {
 
             // Replace the original file with the temporary file
             try {
-                File originalFile = new File(USER_FILE_PATH);
-                File tempFile = new File(USER_FILE_PATH + ".tmp");
+                File originalFile = new File(fileName);
+                File tempFile = new File(fileName + ".tmp");
 
                 if (!tempFile.exists() || !tempFile.canRead()) {
                     System.err.println("Temporary file is missing or cannot be read.");
@@ -230,8 +229,8 @@ public class Client extends User {
         }
     }
 
-    public static Client getClient(String username) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(USER_FILE_PATH))) {
+    public static Client getClient(String username, String fileName) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] userData = line.split(DELIMITER);
@@ -252,13 +251,13 @@ public class Client extends User {
 
     }
 
-    public boolean updatePassword(String username, String oldPsw, String newPsw, String conPsw) {
+    public boolean updatePassword(String username, String oldPsw, String newPsw, String conPsw, String fileName) {
         if (!newPsw.equals(conPsw)) {
             System.out.println("New password does not match the confirmation password.");
             return false;
         }
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(USER_FILE_PATH)); BufferedWriter writer = new BufferedWriter(new FileWriter(USER_FILE_PATH + ".tmp"))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName)); BufferedWriter writer = new BufferedWriter(new FileWriter(fileName + ".tmp"))) {
 
             String line;
             boolean updated = false;
@@ -287,8 +286,8 @@ public class Client extends User {
         }
 
         try {
-            File originalFile = new File(USER_FILE_PATH);
-            File tempFile = new File(USER_FILE_PATH + ".tmp");
+            File originalFile = new File(fileName);
+            File tempFile = new File(fileName + ".tmp");
 
             if (!tempFile.exists() || !tempFile.canRead()) {
                 System.err.println("Temporary file is missing or cannot be read.");

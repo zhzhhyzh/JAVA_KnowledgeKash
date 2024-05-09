@@ -6,7 +6,6 @@ import java.io.IOException;
 public class Admin extends User {
 static final String DIVIDER = "----------------------------------------------------------------------------------------------------------------------------------------------";
     private static final String DELIMITER = ",";
-    private static final String USER_FILE_PATH = "user.txt";
 
     Admin() {
     }
@@ -15,7 +14,7 @@ static final String DIVIDER = "-------------------------------------------------
         super(username, password);
     }
 
-    public static int listUsers(int page) {
+    public static int listUsers(int page, String fileName) {
         //Page must start from 1
         int startLine = (page - 1) * 20 + 4;
         int endLine = startLine + 19;
@@ -27,7 +26,7 @@ static final String DIVIDER = "-------------------------------------------------
                 "Username", "Password", "Name", "Phone Number", "Email", "Available Points");
         System.out.println(DIVIDER);
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(USER_FILE_PATH))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 lineCount++;

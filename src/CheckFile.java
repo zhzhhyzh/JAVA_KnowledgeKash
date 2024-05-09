@@ -5,11 +5,7 @@ import java.io.IOException;
 
 public class CheckFile {
 
-    private static final String USER_FILE_PATH = "user.txt";
-    private static final String QUES_FILE_PATH = "question.txt";
-
-    private static final String TRAN_FILE_PATH = "transactionHistory.txt";
-    private static final String PROD_FILE_PATH = "product.txt";
+    
     private static final String DELIMITER = ",";
     private static final String USER_INITIAL_DATA = "admin1,123456,Admin 1,null,null,true,0,0,7,null\n"
             + "admin2,1234566,Admin 2,null,null,true,0,0,7,null\n"
@@ -121,13 +117,13 @@ public class CheckFile {
             + ",10. Can you share a quote or saying that motivates or inspires you?,\n";
     //check user file, if file not exist and create file only return true, else will be false
 
-    public static boolean checkUserFile() {
-        File file = new File(USER_FILE_PATH);
+    public static boolean checkUserFile(String fileName) {
+        File file = new File(fileName);
         if (!file.exists()) {
             try {
                 file.createNewFile();
                 // Write initial data to the user file
-                writeInitialUserData();
+                writeInitialUserData(fileName);
                 return true;
             } catch (IOException e) {
                 System.out.println("Unexpected Error in User file creation, Please contact administrator: " + e.getMessage());
@@ -137,13 +133,13 @@ public class CheckFile {
         return true;
     }
 
-    public static boolean checkProdFile() {
-        File file = new File(PROD_FILE_PATH);
+    public static boolean checkProdFile(String fileName) {
+        File file = new File(fileName);
         if (!file.exists()) {
             try {
                 file.createNewFile();
                 // Write initial data to the user file
-                writeInitialProdData();
+                writeInitialProdData(fileName);
                 return true;
             } catch (IOException e) {
                 System.out.println("Unexpected Error in User file creation, Please contact administrator: " + e.getMessage());
@@ -153,13 +149,13 @@ public class CheckFile {
         return true;
     }
 
-    public static boolean checkQuesFile() {
-        File file = new File(QUES_FILE_PATH);
+    public static boolean checkQuesFile(String fileName) {
+        File file = new File(fileName);
         if (!file.exists()) {
             try {
                 file.createNewFile();
                 // Write initial data to the user file
-                writeInitialQuesData();
+                writeInitialQuesData(fileName);
                 return true;
             } catch (IOException e) {
                 System.out.println("Unexpected Error in User file creation, Please contact administrator: " + e.getMessage());
@@ -169,32 +165,32 @@ public class CheckFile {
         return true;
     }
 
-    private static void writeInitialUserData() {
-        try (FileWriter writer = new FileWriter(USER_FILE_PATH)) {
+    private static void writeInitialUserData(String fileName) {
+        try (FileWriter writer = new FileWriter(fileName)) {
             writer.write(USER_INITIAL_DATA);
         } catch (IOException e) {
             System.out.println("Error writing initial data to the user file: " + e.getMessage());
         }
     }
 
-    private static void writeInitialProdData() {
-        try (FileWriter writer = new FileWriter(PROD_FILE_PATH)) {
+    private static void writeInitialProdData(String fileName) {
+        try (FileWriter writer = new FileWriter(fileName)) {
             writer.write(PROD_INITIAL_DATA);
         } catch (IOException e) {
             System.out.println("Error writing initial data to the user file: " + e.getMessage());
         }
     }
 
-    private static void writeInitialQuesData() {
-        try (FileWriter writer = new FileWriter(QUES_FILE_PATH)) {
+    private static void writeInitialQuesData(String fileName) {
+        try (FileWriter writer = new FileWriter(fileName)) {
             writer.write(QUES_INITIAL_DATA);
         } catch (IOException e) {
             System.out.println("Error writing initial data to the user file: " + e.getMessage());
         }
     }
 
-    public static boolean checkTransactionFile() {
-        File file = new File(TRAN_FILE_PATH);
+    public static boolean checkTransactionFile(String fileName) {
+        File file = new File(fileName);
         if (!file.exists()) {
             try {
                 file.createNewFile();
