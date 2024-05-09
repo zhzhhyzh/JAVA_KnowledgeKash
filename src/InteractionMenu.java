@@ -639,10 +639,12 @@ public class InteractionMenu {
                     errorFlag = false;
                     if (choice != 1 && choice != 0 && choice != 2) {
                         errorFlag = true;
-                        System.out.println("Invalid choice. Please enter again (1/0):");
+                        System.out.print("Invalid choice. Please enter again:");
                     }
                 } catch (InputMismatchException ex) {
-                    System.out.println("Invalid Input. Please enter again (1/0):");
+                    System.out.print("Invalid Input. Please enter again:");
+                    errorFlag = true;
+
                     scanner.nextLine();
                 }
             } while (errorFlag);
@@ -743,7 +745,7 @@ public class InteractionMenu {
             System.out.println("2. Update Password");
 
             System.out.println("0. Back");
-            System.out.println("Enter your choice:");
+            System.out.print("Enter your choice:");
 
             do {
                 try {
@@ -751,10 +753,11 @@ public class InteractionMenu {
                     errorFlag = false;
                     if (choice != 1 && choice != 0 && choice != 2) {
                         errorFlag = true;
-                        System.out.println("Invalid choice. Please enter again (1/0):");
+                        System.out.print("Invalid choice. Please enter again:");
                     }
                 } catch (InputMismatchException ex) {
-                    System.out.println("Invalid Input. Please enter again (1/0):");
+                    System.out.print("Invalid Input. Please enter again:");
+                    errorFlag = true;
                     scanner.nextLine();
                 }
             } while (errorFlag);
