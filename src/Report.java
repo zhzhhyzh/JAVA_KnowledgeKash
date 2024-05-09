@@ -16,7 +16,6 @@ import java.util.List;
 public class Report {
 
     private static final String DIVIDER = "--------------------------------------------------------------------------------------";
-    private static final String TRANSACTION_FILE_PATH = "transactionHistory.txt";
 
     public static void generateReport(int totalEarnedPoints, int totalRedemptionPoints, int totalExpiredPoints, LocalDate fromDate, LocalDate toDate) {
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
@@ -54,8 +53,8 @@ public class Report {
         }
     }
 
-    public static void findTransactionByUsername(String username) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(TRANSACTION_FILE_PATH))) {
+    public static void findTransactionByUsername(String username, String fileName) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
             String line;
             boolean found = false;
             DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");

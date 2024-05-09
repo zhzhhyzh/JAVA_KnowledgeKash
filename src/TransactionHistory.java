@@ -30,17 +30,17 @@ public class TransactionHistory {
     TransactionHistory() {
     }
 
-    public TransactionHistory(String username, char transactionType, int points) {
+    public TransactionHistory(String username, char transactionType, int points, String fileName) {
         this.username = username;
         this.transactionType = transactionType;
         this.points = points;
         this.transactionDate = new Date();
-        this.transactionId = getLastTransactionId() + 1;
+        this.transactionId = getLastTransactionId(fileName) + 1;
     }
 
-    private int getLastTransactionId() {
+    private int getLastTransactionId(String fileName) {
         int maxId = 0;
-        try (BufferedReader reader = new BufferedReader(new FileReader(TRANSACTION_FILE_PATH))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] transactionData = line.split(DELIMITER);

@@ -224,7 +224,7 @@ public class InteractionMenu {
         System.out.print("Enter your password: ");
         String password = scanner.nextLine();
 
-        String tempSave = Client.login(username, password);
+        String tempSave = Client.login(username, password, USER_FILE_PATH);
 
         // Check if login was successful
         if (tempSave != null) {
@@ -238,8 +238,8 @@ public class InteractionMenu {
             clearScreen();
             System.out.println("Login successful! Welcome, " + tempSave + "!");
 
-            Policy.getDayCount();
-            Policy.applyPolicy(username, TRANSACTION_FILE_PATH);
+            Policy.getDayCount(USER_FILE_PATH);
+            Policy.applyPolicy(username, TRANSACTION_FILE_PATH, USER_FILE_PATH);
             return false;
         } else {
             clearScreen();
@@ -555,7 +555,7 @@ public class InteractionMenu {
 
         do {
             PointManagement pm = new PointManagement();
-            pm.getClient(username[0]);
+            pm.getClient(username[0], USER_FILE_PATH);
             int identifier = pm.getAvailablePoints();
             System.out.println(DIVIDER);
             System.out.println("KnowledgeKash Menu > Redeem Rewards");
@@ -604,10 +604,10 @@ public class InteractionMenu {
                         } else {
                             clearScreen();
                             RewardRedemption.redeemProduct(choices, PROD_FILE_PATH);
-                            pm.decreasePoints(tempInt);
-                            TransactionHistory th = new TransactionHistory(username[0], 'R', tempInt);
+                            pm.decreasePoints(tempInt, USER_FILE_PATH);
+                            TransactionHistory th = new TransactionHistory(username[0], 'R', tempInt, TRANSACTION_FILE_PATH);
                             th.writeTransactionToFile(TRANSACTION_FILE_PATH);
-                            pm.getClient(username[0]);
+                            pm.getClient(username[0], USER_FILE_PATH);
                             System.out.println("Current available point(s): " + pm.getAvailablePoints());
                         }
                     }
@@ -623,9 +623,9 @@ public class InteractionMenu {
             System.out.println("KnowledgeKash Menu > Profile");
             System.out.println(DIVIDER);
             PointManagement pm = new PointManagement();
-            pm.getClient(username[0]);
+            pm.getClient(username[0], USER_FILE_PATH);
             System.out.println(pm.toString());
-            Policy.showExpired(username[0]);
+            Policy.showExpired(username[0], USER_FILE_PATH);
             System.out.println("1. View/Update Profile");
             System.out.println("2. View Transaction");
             System.out.println("0. Back");
@@ -693,13 +693,13 @@ public class InteractionMenu {
                                     viewPage--;
                                     clearScreen();
                                 } else {
-                                    Report.findTransactionByUsername(username[0]);
+                                    Report.findTransactionByUsername(username[0], TRANSACTION_FILE_PATH);
                                     System.out.print("Enter your choice: ");
                                 }
                                 break;
                             case 3:
                                 if (viewPage > 1) {
-                                    Report.findTransactionByUsername(username[0]);
+                                    Report.findTransactionByUsername(username[0], TRANSACTION_FILE_PATH);
                                     System.out.print("Enter your choice: ");
 
                                 } else {
@@ -1043,7 +1043,7 @@ public class InteractionMenu {
     public static void callAnswerQuestion(Scanner scanner, String[] username) {
         int choice = 0;
         PointManagement pm = new PointManagement();
-        pm.getClient(username[0]);
+        pm.getClient(username[0], USER_FILE_PATH);
         boolean errorFlag = false;
         do {
             System.out.println(DIVIDER);
@@ -1065,8 +1065,8 @@ public class InteractionMenu {
                             questionCountS = (int) (Math.random() * questionCountS + 1);
                             int qSPoint = qs.answerQuestion(questionCountS, QUES_FILE_PATH);
                             System.out.println("Points earned: " + qSPoint);
-                            pm.increasePoints(qSPoint);
-                            TransactionHistory th1 = new TransactionHistory(username[0], 'E', qSPoint);
+                            pm.increasePoints(qSPoint, USER_FILE_PATH);
+                            TransactionHistory th1 = new TransactionHistory(username[0], 'E', qSPoint, TRANSACTION_FILE_PATH);
                             th1.writeTransactionToFile(TRANSACTION_FILE_PATH);
                             errorFlag = false;
                             break;
@@ -1077,8 +1077,8 @@ public class InteractionMenu {
                             int qBPoint = qb.answerQuestion(questionCountBoo, QUES_FILE_PATH);
                             System.out.println("Points earned: " + qBPoint);
 
-                            pm.increasePoints(qBPoint);
-                            TransactionHistory th2 = new TransactionHistory(username[0], 'E', qBPoint);
+                            pm.increasePoints(qBPoint, USER_FILE_PATH);
+                            TransactionHistory th2 = new TransactionHistory(username[0], 'E', qBPoint, TRANSACTION_FILE_PATH);
                             th2.writeTransactionToFile(TRANSACTION_FILE_PATH);
                             errorFlag = false;
                             break;
@@ -1089,8 +1089,8 @@ public class InteractionMenu {
                             int qStrPoint = qStr.answerQuestion(questionCountStr, QUES_FILE_PATH);
                             System.out.println("Points earned: " + qStrPoint);
 
-                            pm.increasePoints(qStrPoint);
-                            TransactionHistory th3 = new TransactionHistory(username[0], 'E', qStrPoint);
+                            pm.increasePoints(qStrPoint, USER_FILE_PATH);
+                            TransactionHistory th3 = new TransactionHistory(username[0], 'E', qStrPoint, TRANSACTION_FILE_PATH);
                             th3.writeTransactionToFile(TRANSACTION_FILE_PATH);
                             errorFlag = false;
                             break;
@@ -1113,7 +1113,7 @@ public class InteractionMenu {
     }
 
     public static void managePolicy(Scanner scanner) {
-        System.out.println("Current Policy Day Count:" + Policy.getDayCount());
+        System.out.println("Current Policy Day Count:" + Policy.getDayCount(USER_FILE_PATH));
         System.out.print("Enter numbers of day want to change OR [0] for cancel:");
         int policyChoice = 0;
         boolean policyError = false;
@@ -1132,7 +1132,7 @@ public class InteractionMenu {
         } while (policyError);
 
         if (policyChoice > 0) {
-            Policy.setDayCount(policyChoice);
+            Policy.setDayCount(policyChoice, USER_FILE_PATH);
             clearScreen();
             System.out.println("Policy updated successful.");
         }
@@ -1676,14 +1676,14 @@ public class InteractionMenu {
                                             clearScreen();
 
                                         } else {
-                                            Report.findTransactionByUsername(usernameInput);
+                                            Report.findTransactionByUsername(usernameInput, TRANSACTION_FILE_PATH);
                                             System.out.print("Enter your choice: ");
 
                                         }
                                         break;
                                     case 3:
                                         if (viewPage > 1) {
-                                            Report.findTransactionByUsername(usernameInput);
+                                            Report.findTransactionByUsername(usernameInput, TRANSACTION_FILE_PATH);
                                             System.out.print("Enter your choice: ");
 
                                         } else {
