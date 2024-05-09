@@ -13,10 +13,10 @@ public class QuestionMcq extends QuestionRepository {
     private static int questionId;
     private static final String DELIMITER = ",";
 
-    private static int getRunningQuestionId() {
+    private static int getRunningQuestionId(String fileName) {
         int missingNumber = -1;
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(QUES_FILE_PATH))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
             String line;
             boolean[] numberExists = new boolean[101];
 
@@ -115,11 +115,11 @@ public class QuestionMcq extends QuestionRepository {
 
     }
 
-    public int answerQuestion(int questionId) {
+    public int answerQuestion(int questionId, String fileName) {
         Scanner scanner = new Scanner(System.in);
         int pointAccummulate = 0;
         boolean dataFound = false;
-        try (BufferedReader reader = new BufferedReader(new FileReader(QUES_FILE_PATH))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] userData = line.split(",", -1);
@@ -157,12 +157,12 @@ public class QuestionMcq extends QuestionRepository {
         return pointAccummulate;
     }
 
-    public void createQuestion() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(QUES_FILE_PATH, true))) {
+    public void createQuestion(String fileName) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true))) {
             Scanner scanner = new Scanner(System.in);
 
             // Get the next available question ID
-            questionId = getRunningQuestionId();
+            questionId = getRunningQuestionId(fileName);
             String[] tempSave = new String[20];
             for (int i = 0; i < 20; i++) {
                 if (i % 2 == 0) {
@@ -198,10 +198,10 @@ public class QuestionMcq extends QuestionRepository {
         }
     }
 
-    public boolean updateQuestion(int questionId) {
+    public boolean updateQuestion(int questionId, String fileName) {
         String[] tempSaveQuestion = new String[20];
         Scanner scanner = new Scanner(System.in);
-        try (BufferedReader reader = new BufferedReader(new FileReader(QUES_FILE_PATH)); BufferedWriter writer = new BufferedWriter(new FileWriter(QUES_FILE_PATH + ".tmp"))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName)); BufferedWriter writer = new BufferedWriter(new FileWriter(fileName + ".tmp"))) {
 
             String line;
             boolean updated = false;
@@ -269,8 +269,8 @@ public class QuestionMcq extends QuestionRepository {
 
         // Replace the original file with the temporary file
         try {
-            File originalFile = new File(QUES_FILE_PATH);
-            File tempFile = new File(QUES_FILE_PATH + ".tmp");
+            File originalFile = new File(fileName);
+            File tempFile = new File(fileName + ".tmp");
 
             if (!tempFile.exists() || !tempFile.canRead()) {
                 System.err.println("Temporary file is missing or cannot be read.");
@@ -305,10 +305,10 @@ public class QuestionMcq extends QuestionRepository {
     }
 
     @Override
-    public int getTotalCount() {
+    public int getTotalCount(String fileName) {
         int lineCount = 0;
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(QUES_FILE_PATH))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
             String line;
             while ((line = reader.readLine()) != null) {
 

@@ -12,11 +12,11 @@ public class QuestionRepository {
     static final String DIVIDER = "----------------------------------------------------------------------------------------------------------------------------------------------";
     static final String DIVIDER2 = "==============================================================================================================================================";
 
-    public static final String QUES_FILE_PATH = "question.txt";
+    
 
     //Find question by detail, to string method
-    public void viewQuestion(int questionId) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(QUES_FILE_PATH))) {
+    public void viewQuestion(int questionId, String fileName) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
             String line;
             boolean dataFound = false;
             while ((line = reader.readLine()) != null) {
@@ -49,13 +49,13 @@ public class QuestionRepository {
         }
     }
 
-    public static int listQuestion(int page) {
+    public static int listQuestion(int page, String fileName) {
         //Page must start from 1
         int startLine = 1 + (page - 1) * 3;
         int endLine = startLine + 2;
         int lineCount = 0;
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(QUES_FILE_PATH))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 lineCount++;
@@ -89,8 +89,8 @@ public class QuestionRepository {
         return lineCount ;
     }
 
-    public void deleteQuestion(int questionId) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(QUES_FILE_PATH)); BufferedWriter writer = new BufferedWriter(new FileWriter(QUES_FILE_PATH + ".tmp"))) {
+    public void deleteQuestion(int questionId, String fileName) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName)); BufferedWriter writer = new BufferedWriter(new FileWriter(fileName + ".tmp"))) {
             String line;
             boolean questionFound = false;
 
@@ -119,8 +119,8 @@ public class QuestionRepository {
             System.err.println("Error reading question file: " + e.getMessage());
         }
         try {
-            File originalFile = new File(QUES_FILE_PATH);
-            File tempFile = new File(QUES_FILE_PATH + ".tmp");
+            File originalFile = new File(fileName);
+            File tempFile = new File(fileName + ".tmp");
 
             if (tempFile.exists() && tempFile.canRead() && originalFile.delete()) {
                 if (!tempFile.renameTo(originalFile)) {
@@ -134,10 +134,10 @@ public class QuestionRepository {
         }
     }
 
-    public int getTotalCount() {
+    public int getTotalCount(String fileName) {
         int lineCount = 0;
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(QUES_FILE_PATH))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
             String line;
             while ((line = reader.readLine()) != null) {
 
