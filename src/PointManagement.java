@@ -18,7 +18,7 @@ public class PointManagement {
     private int totalExpiredPoints;
     private LocalDate lastEarningDate;
     private static final String DELIMITER = ",";
-    private static final String USER_FILE_PATH = "user.txt";
+   
 
     public PointManagement() {
     }
@@ -100,17 +100,17 @@ public class PointManagement {
         }
     }
 
-    public void increasePoints(int points) {
+    public void increasePoints(int points, String fileName) {
         totalEarnedPoints += points;
         lastEarningDate = LocalDate.now();
-        updatePoints(USER_FILE_PATH);
+        updatePoints(fileName);
 //        return availablePoints;
     }
 
-    public void decreasePoints(int points) {
+    public void decreasePoints(int points, String fileName) {
         totalRedeemedPoints += points;
         lastEarningDate = LocalDate.now();
-        updatePoints(USER_FILE_PATH);
+        updatePoints(fileName);
 //        return availablePoints;
     }
 
@@ -122,8 +122,8 @@ public class PointManagement {
                 + "Available Points : " + availablePoints;
     }
 
-    public String[] getClient(String username) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(USER_FILE_PATH))) {
+    public String[] getClient(String username, String fileName) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] userData = line.split(DELIMITER);

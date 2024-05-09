@@ -8,7 +8,7 @@ public class User {
     protected String username;
     protected String password;
 
-    private static final String USER_FILE_PATH = "user.txt";
+   
     private static final String DELIMITER = ",";
 
     public User() {
@@ -31,8 +31,8 @@ public class User {
         return username;
     }
 
-    public static String login(String username, String password) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(USER_FILE_PATH))) {
+    public static String login(String username, String password, String fileName) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] userData = line.split(DELIMITER);
