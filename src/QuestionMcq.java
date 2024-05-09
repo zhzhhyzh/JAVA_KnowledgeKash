@@ -1,4 +1,5 @@
 
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -7,7 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 
-public class QuestionBoolean extends QuestionRepository {
+public class QuestionMcq extends QuestionRepository {
 
     private static int questionId;
     private static final String DELIMITER = ",";
@@ -17,20 +18,20 @@ public class QuestionBoolean extends QuestionRepository {
 
         try (BufferedReader reader = new BufferedReader(new FileReader(QUES_FILE_PATH))) {
             String line;
-            boolean[] numberExists = new boolean[201];
+            boolean[] numberExists = new boolean[101];
 
             while ((line = reader.readLine()) != null) {
                 String[] userData = line.split(",", -1);
 
                 if (userData.length > 0) {
                     int runningNo = Integer.parseInt(userData[0].trim());
-                    if (runningNo >= 101 && runningNo <= 200) {
+                    if (runningNo >= 1 && runningNo <= 100) {
                         numberExists[runningNo] = true;
                     }
                 }
 
             }
-            for (int i = 101; i < numberExists.length; i++) {
+            for (int i = 1; i < numberExists.length; i++) {
                 if (!numberExists[i]) {
                     missingNumber = i;
                     break;
@@ -52,61 +53,61 @@ public class QuestionBoolean extends QuestionRepository {
                 if (answerCompare(answer)) {
                     return 1;
                 } else {
-                    return -1;
+                    return 0;
                 }
             case 2:
                 if (answerCompare(answer)) {
-                    return 1;
+                    return 2;
                 } else {
-                    return -1;
+                    return 0;
                 }
             case 3:
                 if (answerCompare(answer)) {
-                    return 1;
+                    return 2;
                 } else {
-                    return -1;
+                    return 0;
                 }
             case 4:
                 if (answerCompare(answer)) {
-                    return 1;
+                    return 2;
                 } else {
-                    return -1;
+                    return 0;
                 }
             case 5:
                 if (answerCompare(answer)) {
-                    return 1;
+                    return 2;
                 } else {
-                    return -1;
+                    return 0;
                 }
             case 6:
                 if (answerCompare(answer)) {
-                    return 2;
+                    return 3;
                 } else {
-                    return -1;
+                    return 0;
                 }
             case 7:
                 if (answerCompare(answer)) {
-                    return 2;
+                    return 4;
                 } else {
-                    return -1;
+                    return 0;
                 }
             case 8:
                 if (answerCompare(answer)) {
-                    return 2;
+                    return 5;
                 } else {
-                    return -1;
+                    return 0;
                 }
             case 9:
                 if (answerCompare(answer)) {
-                    return 2;
+                    return 4;
                 } else {
-                    return -1;
+                    return 0;
                 }
             case 10:
                 if (answerCompare(answer)) {
-                    return 2;
+                    return 5;
                 } else {
-                    return -1;
+                    return 0;
                 }
             default:
                 return 0;
@@ -129,17 +130,18 @@ public class QuestionBoolean extends QuestionRepository {
                     int count = 0;
                     for (int i = 1; i < userData.length; i += 2) {
                         if (i + 1 < userData.length) {
+                            System.out.println("Question" + (i - count) + ": " + userData[i]);
+                            System.out.println("Answer for question" + (i - count) + ": " + userData[i + 1]);
+
                             int questionIndex = i - count;
-                            System.out.println("Question" + questionIndex + ": " + userData[i]);
-                            System.out.println("Answer for question" + questionIndex + ": " + userData[i + 1]);
                             count++;
-                            int pointIndicator = -1;
-                            do {
-                                System.out.print("Enter your answer [T/F]: ");
-                                String answer = scanner.nextLine();
-                                pointIndicator = pointDistribute(questionIndex, answer);
-                            } while (pointIndicator == -1);
-                            pointAccummulate += pointIndicator;
+                            System.out.print("Enter your answer: ");
+                            String answer = scanner.nextLine();
+                            int holdPoint = pointDistribute(questionIndex, answer);
+                            pointAccummulate += holdPoint;
+                            if (holdPoint == 0) {
+                                System.out.println("No point will added due to invalid input.");
+                            }
 
                         }
                     }
@@ -168,8 +170,8 @@ public class QuestionBoolean extends QuestionRepository {
                     tempSave[i] = scanner.nextLine();
 
                 } else {
-
-                    tempSave[i] = "(T) True  (F) False";
+                    System.out.println("Enter the answer" + (i / 2 + 1) + ":");
+                    tempSave[i] = scanner.nextLine();
 
                 }
             }
@@ -189,7 +191,7 @@ public class QuestionBoolean extends QuestionRepository {
             System.out.println("\n".repeat(100)); // Print 50 newlines
 
             System.out.println("Question created successfully!");
-            System.out.println(DIVIDER);
+                        System.out.println(DIVIDER);
 
         } catch (IOException e) {
             System.err.println("Error writing to question file: " + e.getMessage());
@@ -208,23 +210,33 @@ public class QuestionBoolean extends QuestionRepository {
                 if (userData.length >= 1) {
                     String storedQuestionId = userData[0];
 
-                    if (questionId == Integer.parseInt(storedQuestionId)) {
+                    if (!storedQuestionId.isEmpty() && questionId == Integer.parseInt(storedQuestionId)) {
+
                         System.out.println("Question ID: " + questionId);
-                        System.out.println("*No changes question click \"Enter\"");
+                        System.out.println("*No changes question or answer click \"Enter\"");
                         int count = 0;
                         for (int i = 1; i < userData.length; i += 2) {
+                            int questionIndex = i - count;
+                            count++;
                             if (i + 1 < userData.length) {
-                                System.out.println("Question" + (i - count) + ": " + userData[i]);
-                                count++;
+                                System.out.println("Question" + questionIndex + ": " + userData[i]);
+                                System.out.print("Enter question:");
+
                                 String questionChanger = scanner.nextLine();
                                 if (questionChanger.isEmpty()) {
                                     tempSaveQuestion[i - 1] = userData[i];
                                 } else {
                                     tempSaveQuestion[i - 1] = questionChanger;
                                 }
+                                System.out.println("Answer" + questionIndex + ": " + userData[i + 1]);
+                                System.out.print("Enter answer:");
 
-                                tempSaveQuestion[i] = userData[i + 1];
-
+                                String AnswerChanger = scanner.nextLine();
+                                if (AnswerChanger.isEmpty()) {
+                                    tempSaveQuestion[i] = userData[i + 1];
+                                } else {
+                                    tempSaveQuestion[i] = AnswerChanger;
+                                }
                             }
                         }
                         // Construct the updated line
@@ -242,9 +254,10 @@ public class QuestionBoolean extends QuestionRepository {
             }
 
             if (!updated) {
-                InteractionMenu.clearScreen();
+                 InteractionMenu.clearScreen();
 
-                System.out.println("\n".repeat(100)); // Print 50 newlines
+            System.out.println("\n".repeat(100)); // Print 50 newlines
+
                 System.err.println("Question not found.");
                 System.out.println(DIVIDER);
                 return false;
@@ -273,7 +286,7 @@ public class QuestionBoolean extends QuestionRepository {
                 System.err.println("Failed to replace the original file with the temporary file.");
                 return false;
             }
-            InteractionMenu.clearScreen();
+ InteractionMenu.clearScreen();
 
             System.out.println("\n".repeat(100)); // Print 50 newlines
 
@@ -288,7 +301,7 @@ public class QuestionBoolean extends QuestionRepository {
     }
 
     private boolean answerCompare(String answer) {
-        return answer.equals("T") || answer.equals("F");
+        return answer.equals("A") || answer.equals("B") || answer.equals("C") || answer.equals("D") || answer.equals("a") || answer.equals("b") || answer.equals("c") || answer.equals("d");
     }
 
     @Override
@@ -301,7 +314,7 @@ public class QuestionBoolean extends QuestionRepository {
 
                 String[] userData = line.split(DELIMITER);
                 int found = Integer.parseInt(userData[0]);
-                if (found > 100 && found < 201) {
+                if (found > 0 && found < 101) {
                     lineCount++;
                 }
             }
