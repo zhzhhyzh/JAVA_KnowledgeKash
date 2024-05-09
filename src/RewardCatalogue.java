@@ -23,7 +23,7 @@ public class RewardCatalogue {
     }
 
     private static void loadProductsFromFile() {
-        try (BufferedReader reader = new BufferedReader(new FileReader("question.txt"))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("product.txt"))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] data = line.split(",");
