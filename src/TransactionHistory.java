@@ -172,11 +172,11 @@ public class TransactionHistory {
         int lineCount = 0;
         int startIndex = (page - 1) * TRANSACTIONS_PER_PAGE + 1;
         int endIndex = startIndex + TRANSACTIONS_PER_PAGE - 1;
- int totalEarnedPoint = 0;
-            int totalRedemptedPoint = 0;
-            int totalExpiredPoint = 0;
+        int totalEarnedPoint = 0;
+        int totalRedemptedPoint = 0;
+        int totalExpiredPoint = 0;
         System.out.println(DIVIDER);
-        System.out.printf("| %-15s | %-15s | %-15s | %-7s | %-15s |%n", "Transaction ID", "Username", "Type", "Points", "Date");
+        System.out.printf("| %-15s | %-15s | %-10s | %-11s | %-19s |%n", "Transaction ID", "Username", "Type", "Points", "Date");
         System.out.println(DIVIDER);
 
         try (BufferedReader reader = new BufferedReader(new FileReader(TRANSACTION_FILE_PATH))) {
@@ -185,14 +185,16 @@ public class TransactionHistory {
 
             while ((line = reader.readLine()) != null) {
                 String[] userData = line.split(",");
-                
+
                 LocalDateTime transactionDate = LocalDateTime.parse(userData[4], formatter);
 
-                LocalDate parsedTransactionDate = transactionDate.toLocalDate(); // Extract the date part
+                LocalDate parsedTransactionDate = transactionDate.toLocalDate();
 
-                if (parsedTransactionDate.isAfter(startDate) && parsedTransactionDate.isBefore(endDate)) {
+                if ((parsedTransactionDate.isEqual(startDate) || parsedTransactionDate.isAfter(startDate))
+                        && (parsedTransactionDate.isEqual(endDate) || parsedTransactionDate.isBefore(endDate))) {
+
                     lineCount++;
-                     if (userData[2].equals("E")) {
+                    if (userData[2].equals("E")) {
                         totalEarnedPoint += Integer.parseInt(userData[3].trim());
                     } else if (userData[2].equals("R")) {
                         totalRedemptedPoint += Integer.parseInt(userData[3].trim());
@@ -201,7 +203,7 @@ public class TransactionHistory {
                     }
                     if (lineCount >= startIndex && lineCount <= endIndex) {
                         // Print transaction data in table format
-                        System.out.printf("| %-15s | %-15s | %-10s | %-11s | %-19s |%n",
+                        System.out.printf("| %-15s | %-15s | %-10s | %11s | %-19s |%n",
                                 userData[0], userData[1], userData[2], userData[3], userData[4]);
                     } else if (lineCount > endIndex) {
                         break; // Exit loop if reached end index
@@ -230,11 +232,16 @@ public class TransactionHistory {
             while ((line = reader.readLine()) != null) {
                 String[] userData = line.split(",");
                 char type = userData[2].charAt(0);
-                LocalDate transactionDate = LocalDate.parse(userData[4], formatter);
-                if (type == transactionType && transactionDate.isAfter(startDate) && transactionDate.isBefore(endDate)) {
+                LocalDateTime transactionDate = LocalDateTime.parse(userData[4], formatter);
+
+                LocalDate parsedTransactionDate = transactionDate.toLocalDate();
+
+                if ((parsedTransactionDate.isEqual(startDate) || parsedTransactionDate.isAfter(startDate))
+                        && (parsedTransactionDate.isEqual(endDate) || parsedTransactionDate.isBefore(endDate))) {
+
                     lineCount++;
                     if (lineCount >= startIndex && lineCount <= endIndex) {
-                        System.out.printf("|%-15s | %-15s | %-10s| %-11s | %-19s | %n", userData[0], userData[1], userData[2], userData[3], userData[4]);
+                        System.out.printf("|%-15s | %-15s | %-10s| %11s | %-19s | %n", userData[0], userData[1], userData[2], userData[3], userData[4]);
                     } else if (lineCount > endIndex) {
                         break;
                     }
@@ -248,42 +255,42 @@ public class TransactionHistory {
     }
 
     public static int findTransactionByUsername(String username, int page) {
-    int lineCount = 0;
-    int startIndex = (page - 1) * TRANSACTIONS_PER_PAGE + 1;
-    int endIndex = startIndex + TRANSACTIONS_PER_PAGE - 1;
+        int lineCount = 0;
+        int startIndex = (page - 1) * TRANSACTIONS_PER_PAGE + 1;
+        int endIndex = startIndex + TRANSACTIONS_PER_PAGE - 1;
 
-    try (BufferedReader reader = new BufferedReader(new FileReader(TRANSACTION_FILE_PATH))) {
-        String line;
-        boolean found = false;
+        try (BufferedReader reader = new BufferedReader(new FileReader(TRANSACTION_FILE_PATH))) {
+            String line;
+            boolean found = false;
 
-        System.out.println(DIVIDER);
-        System.out.printf("| %-15s | %-15s | %-10s | %-11s | %-19s |%n", "Transaction ID", "Username", "Type", "Points", "Date");
-        System.out.println(DIVIDER);
+            System.out.println(DIVIDER);
+            System.out.printf("| %-15s | %-15s | %-10s | %-11s | %-19s |%n", "Transaction ID", "Username", "Type", "Points", "Date");
+            System.out.println(DIVIDER);
 
-        while ((line = reader.readLine()) != null) {
-            String[] userData = line.split(",");
-            if (userData.length >= 2 && username.equals(userData[1].trim())) {
-                lineCount++;
-                if (lineCount >= startIndex && lineCount <= endIndex) {
-                    found = true;
-                    // Print transaction data in table format
-                    System.out.printf("| %-15s | %-15s | %10s | %11s | %-15s |%n",
-                            userData[0], userData[1], userData[2], userData[3], userData[4]);
-                } else if (lineCount > endIndex) {
-                    break; // Exit loop if reached end index
+            while ((line = reader.readLine()) != null) {
+                String[] userData = line.split(",");
+                if (userData.length >= 2 && username.equals(userData[1].trim())) {
+                    lineCount++;
+                    if (lineCount >= startIndex && lineCount <= endIndex) {
+                        found = true;
+                        // Print transaction data in table format
+                        System.out.printf("| %-15s | %-15s | %10s | %11s | %-15s |%n",
+                                userData[0], userData[1], userData[2], userData[3], userData[4]);
+                    } else if (lineCount > endIndex) {
+                        break; // Exit loop if reached end index
+                    }
                 }
             }
-        }
 
-        if (!found) {
-            System.out.println("No transactions found for username: " + username);
-        }
+            if (!found) {
+                System.out.println("No transactions found for username: " + username);
+            }
 
-        System.out.println(DIVIDER);
-    } catch (IOException e) {
-        System.err.println("Error reading transaction file: " + e.getMessage());
+            System.out.println(DIVIDER);
+        } catch (IOException e) {
+            System.err.println("Error reading transaction file: " + e.getMessage());
+        }
+        return lineCount;
     }
-    return lineCount;
-}
 
 }

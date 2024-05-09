@@ -74,20 +74,21 @@ public class Report {
             // Create a BufferedWriter to write to the file
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath.toFile()))) {
                 writer.write(DIVIDER + System.lineSeparator());
-                writer.write(String.format("| %-15s | %-15s | %-15s | %-7s | %-15s |%n", "Transaction ID", "Username", "Type", "Points", "Date"));
+                writer.write(String.format("| %-15s | %-15s | %-15s | %-7s | %-19s |%n", "Transaction ID", "Username", "Type", "Points", "Date"));
                 writer.write(DIVIDER + System.lineSeparator());
 
                 while ((line = reader.readLine()) != null) {
                     String[] userData = line.split(",");
-                    if (userData[2].equals("E")) {
-                        totalEarnedPoint += Integer.parseInt(userData[3].trim());
-                    } else if (userData[2].equals("R")) {
-                        totalRedemptedPoint += Integer.parseInt(userData[3].trim());
-                    } else if (userData[2].equals("P")) {
-                        totalExpiredPoint += Integer.parseInt(userData[3].trim());
-                    }
+
                     if (userData.length >= 2 && username.equals(userData[1].trim())) {
                         found = true;
+                        if (userData[2].equals("E")) {
+                            totalEarnedPoint += Integer.parseInt(userData[3].trim());
+                        } else if (userData[2].equals("R")) {
+                            totalRedemptedPoint += Integer.parseInt(userData[3].trim());
+                        } else if (userData[2].equals("P")) {
+                            totalExpiredPoint += Integer.parseInt(userData[3].trim());
+                        }
                         // Write transaction data to the file
                         writer.write(String.format("| %-15s | %-15s | %-15s | %-7s | %-19s |%n",
                                 userData[0], userData[1], userData[2], userData[3], userData[4]));
@@ -99,7 +100,7 @@ public class Report {
                 }
 
                 writer.write(DIVIDER);
-                writer.write("\nTotal Earned Points: " + totalEarnedPoint + "\nTotal Redeemed Point: " + totalRedemptedPoint
+                writer.write("\nTotal Earned Points: " + totalEarnedPoint + "\nTotal Redeemed Points: " + totalRedemptedPoint
                         + "\nTotal Expired Points: " + totalExpiredPoint + "\nCurrently Available Points: " + (totalEarnedPoint - totalRedemptedPoint - totalExpiredPoint));
             }
 
