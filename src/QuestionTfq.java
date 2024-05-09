@@ -7,7 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 
-public class QuestionString extends QuestionRepository {
+public class QuestionTfq extends QuestionRepository {
 
     private static int questionId;
     private static final String DELIMITER = ",";
@@ -17,20 +17,20 @@ public class QuestionString extends QuestionRepository {
 
         try (BufferedReader reader = new BufferedReader(new FileReader(QUES_FILE_PATH))) {
             String line;
-            boolean[] numberExists = new boolean[301];
+            boolean[] numberExists = new boolean[201];
 
             while ((line = reader.readLine()) != null) {
                 String[] userData = line.split(",", -1);
 
                 if (userData.length > 0) {
                     int runningNo = Integer.parseInt(userData[0].trim());
-                    if (runningNo >= 201 && runningNo <= 300) {
+                    if (runningNo >= 101 && runningNo <= 200) {
                         numberExists[runningNo] = true;
                     }
                 }
 
             }
-            for (int i = 201; i < numberExists.length; i++) {
+            for (int i = 101; i < numberExists.length; i++) {
                 if (!numberExists[i]) {
                     missingNumber = i;
                     break;
@@ -46,71 +46,67 @@ public class QuestionString extends QuestionRepository {
     }
 
     public int pointDistribute(int questionIndex, String answer) {
-
+        answer = answer.toUpperCase();
         switch (questionIndex) {
             case 1:
-                if (!answer.isEmpty()) {
-                    return 5;
+                if (answerCompare(answer)) {
+                    return 1;
                 } else {
-                    return 0;
+                    return -1;
                 }
             case 2:
-                if (!answer.isEmpty()) {
-                    return 5;
+                if (answerCompare(answer)) {
+                    return 1;
                 } else {
-                    return 0;
+                    return -1;
                 }
             case 3:
-                if (!answer.isEmpty()) {
-                    return 5;
+                if (answerCompare(answer)) {
+                    return 1;
                 } else {
-                    return 0;
+                    return -1;
                 }
             case 4:
-                if (!answer.isEmpty()) {
-                    return 5;
+                if (answerCompare(answer)) {
+                    return 1;
                 } else {
-                    return 0;
+                    return -1;
                 }
             case 5:
-                if (!answer.isEmpty()) {
-                    return 5;
+                if (answerCompare(answer)) {
+                    return 1;
                 } else {
-                    return 0;
+                    return -1;
                 }
             case 6:
-                if (!answer.isEmpty()) {
-                    return 10;
+                if (answerCompare(answer)) {
+                    return 2;
                 } else {
-                    return 0;
+                    return -1;
                 }
             case 7:
-                if (!answer.isEmpty()) {
-                    return 10;
-
+                if (answerCompare(answer)) {
+                    return 2;
                 } else {
-                    return 0;
+                    return -1;
                 }
             case 8:
-                if (!answer.isEmpty()) {
-                    return 10;
-
+                if (answerCompare(answer)) {
+                    return 2;
                 } else {
-                    return 0;
+                    return -1;
                 }
             case 9:
-                if (!answer.isEmpty()) {
-                    return 10;
-
+                if (answerCompare(answer)) {
+                    return 2;
                 } else {
-                    return 0;
+                    return -1;
                 }
             case 10:
-                if (!answer.isEmpty()) {
-                    return 10;
-
+                if (answerCompare(answer)) {
+                    return 2;
                 } else {
-                    return 0;
+                    return -1;
                 }
             default:
                 return 0;
@@ -137,11 +133,13 @@ public class QuestionString extends QuestionRepository {
                             System.out.println("Question" + questionIndex + ": " + userData[i]);
                             System.out.println("Answer for question" + questionIndex + ": " + userData[i + 1]);
                             count++;
-
-                            System.out.print("Enter your answer: ");
-                            String answer = scanner.nextLine();
-
-                            pointAccummulate += pointDistribute(questionIndex, answer);
+                            int pointIndicator = -1;
+                            do {
+                                System.out.print("Enter your answer [T/F]: ");
+                                String answer = scanner.nextLine();
+                                pointIndicator = pointDistribute(questionIndex, answer);
+                            } while (pointIndicator == -1);
+                            pointAccummulate += pointIndicator;
 
                         }
                     }
@@ -171,7 +169,7 @@ public class QuestionString extends QuestionRepository {
 
                 } else {
 
-                    tempSave[i] = "Any Relevant";
+                    tempSave[i] = "(T) True  (F) False";
 
                 }
             }
@@ -244,10 +242,9 @@ public class QuestionString extends QuestionRepository {
             }
 
             if (!updated) {
-                 InteractionMenu.clearScreen();
+                InteractionMenu.clearScreen();
 
-            System.out.println("\n".repeat(100)); // Print 50 newlines
-
+                System.out.println("\n".repeat(100)); // Print 50 newlines
                 System.err.println("Question not found.");
                 System.out.println(DIVIDER);
                 return false;
@@ -276,7 +273,7 @@ public class QuestionString extends QuestionRepository {
                 System.err.println("Failed to replace the original file with the temporary file.");
                 return false;
             }
- InteractionMenu.clearScreen();
+            InteractionMenu.clearScreen();
 
             System.out.println("\n".repeat(100)); // Print 50 newlines
 
@@ -290,6 +287,10 @@ public class QuestionString extends QuestionRepository {
 
     }
 
+    private boolean answerCompare(String answer) {
+        return answer.equals("T") || answer.equals("F");
+    }
+
     @Override
     public int getTotalCount() {
         int lineCount = 0;
@@ -300,7 +301,7 @@ public class QuestionString extends QuestionRepository {
 
                 String[] userData = line.split(DELIMITER);
                 int found = Integer.parseInt(userData[0]);
-                if (found > 200 && found < 301) {
+                if (found > 100 && found < 201) {
                     lineCount++;
                 }
             }
@@ -312,5 +313,4 @@ public class QuestionString extends QuestionRepository {
         return lineCount;
 
     }
-
 }

@@ -928,17 +928,17 @@ public class InteractionMenu {
                     int choice = scanner.nextInt();
                     switch (choice) {
                         case 1:
-                            QuestionSelect qs = new QuestionSelect();
+                            QuestionMcq qs = new QuestionMcq();
                             qs.createQuestion();
                             errorFlag = false;
                             break;
                         case 2:
-                            QuestionBoolean qb = new QuestionBoolean();
+                            QuestionTfq qb = new QuestionTfq();
                             qb.createQuestion();
                             errorFlag = false;
                             break;
                         case 3:
-                            QuestionString qStr = new QuestionString();
+                            QuestionEssay qStr = new QuestionEssay();
                             qStr.createQuestion();
                             errorFlag = false;
                             break;
@@ -979,13 +979,13 @@ public class InteractionMenu {
                 }
             } while (errorFlag);
             if (choice > 0 && choice < 101) {
-                QuestionSelect qs = new QuestionSelect();
+                QuestionMcq qs = new QuestionMcq();
                 qs.updateQuestion(choice);
             } else if (choice > 100 && choice < 201) {
-                QuestionBoolean qb = new QuestionBoolean();
+                QuestionTfq qb = new QuestionTfq();
                 qb.updateQuestion(choice);
             } else if (choice > 200 && choice < 301) {
-                QuestionString qStr = new QuestionString();
+                QuestionEssay qStr = new QuestionEssay();
                 qStr.updateQuestion(choice);
             }
         } else {
@@ -1044,7 +1044,7 @@ public class InteractionMenu {
                     choice = scanner.nextInt();
                     switch (choice) {
                         case 1:
-                            QuestionSelect qs = new QuestionSelect();
+                            QuestionMcq qs = new QuestionMcq();
                             int questionCountS = qs.getTotalCount();
                             questionCountS = (int) (Math.random() * questionCountS + 1);
                             int qSPoint = qs.answerQuestion(questionCountS);
@@ -1055,7 +1055,7 @@ public class InteractionMenu {
                             errorFlag = false;
                             break;
                         case 2:
-                            QuestionBoolean qb = new QuestionBoolean();
+                            QuestionTfq qb = new QuestionTfq();
                             int questionCountBoo = qb.getTotalCount();
                             questionCountBoo = (int) (Math.random() * questionCountBoo + 101);
                             int qBPoint = qb.answerQuestion(questionCountBoo);
@@ -1067,7 +1067,7 @@ public class InteractionMenu {
                             errorFlag = false;
                             break;
                         case 3:
-                            QuestionString qStr = new QuestionString();
+                            QuestionEssay qStr = new QuestionEssay();
                             int questionCountStr = qStr.getTotalCount();
                             questionCountStr = (int) (Math.random() * questionCountStr + 201);
                             int qStrPoint = qStr.answerQuestion(questionCountStr);
@@ -1083,11 +1083,12 @@ public class InteractionMenu {
                             break;
                         default:
                             System.out.println("Invalid choice. Please try again.");
+                            System.out.print("Please enter valid input:");
                             errorFlag = true;
                             break;
                     }
                 } catch (InputMismatchException ex) {
-                    System.out.println("Please enter valid input:");
+                    System.out.print("Please enter valid input:");
                     scanner.nextLine();
                     errorFlag = true;
                 }
