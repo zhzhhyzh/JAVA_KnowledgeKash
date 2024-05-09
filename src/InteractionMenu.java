@@ -227,12 +227,12 @@ public class InteractionMenu {
                 PassINusername[0] = tempSave;
             }
 
-            Policy.applyPolicy(username);
-
-            clearScreen();
             loggedIn[0] = true;
             clearScreen();
             System.out.println("Login successful! Welcome, " + tempSave + "!");
+
+            Policy.getDayCount();
+            Policy.applyPolicy(username);
             return false;
         } else {
             clearScreen();

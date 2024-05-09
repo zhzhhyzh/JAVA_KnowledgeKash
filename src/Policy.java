@@ -23,14 +23,20 @@ public class Policy {
                 String[] userData = line.split(",");
                 if (userData[0].equals(username)) {
                     String transactionDate = userData[9];
+                    int tempTotalEarn = Integer.parseInt(userData[6].trim());
+                    int tempRedeem = Integer.parseInt(userData[7].trim());
+                    int tempExpired = Integer.parseInt(userData[8].trim());
+                    int availablePoint = tempTotalEarn - tempExpired - tempRedeem;
+
                     if (transactionDate.equals("null")) {
                         userData[9] = currentDate.toString();
-                    } else if (LocalDate.parse(transactionDate).isBefore(periodTerm) && Integer.parseInt(userData[8]) >= 50) {
-                        int currentPoints = Integer.parseInt(userData[8]);
-                        currentPoints -= 10;
+                    } else if ((LocalDate.parse(transactionDate).isEqual(periodTerm) || LocalDate.parse(transactionDate).isBefore(periodTerm)) && availablePoint >= 50) {
+
+                        tempExpired += 10;
                         TransactionHistory th = new TransactionHistory(username, 'P', 10);
                         th.writeTransactionToFile();
-                        userData[8] = String.valueOf(currentPoints);
+
+                        userData[8] = String.valueOf(tempExpired);
                         userData[9] = currentDate.toString();
                     }
                 }
@@ -84,15 +90,6 @@ public class Policy {
                 String[] userData = firstLine.split(",");
                 if (userData.length > 8) {
                     dayCount = Integer.parseInt(userData[8]);
-//                    System.err.println("Daycount hereee>>>>>" + dayCount);
-//                    System.err.println("Daycount hereee>>>>>" + userData[0]);
-//                    System.err.println("Daycount hereee>>>>>" + userData[1]);
-//                    System.err.println("Daycount hereee>>>>>" + userData[2]);
-//                    System.err.println("Daycount hereee>>>>>" + userData[3]);
-//
-//                    System.err.println("Daycount hereee>>>>>" + userData[8]);
-//                    System.err.println("Daycount hereee>>>>>" + userData[9]); testing purpose
-
                     return Integer.parseInt(userData[8]);
                 } else {
                     System.err.println("Invalid format in user file: Missing field at index 8");
