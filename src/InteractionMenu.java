@@ -18,6 +18,7 @@ public class InteractionMenu {
     public static final String ANSI_BOLD = "\u001B[1m";
     public static final String ANSI_RESET_BOLD = "\u001B[21m";
     public static final String DIVIDER = "=====================================================================";
+    private static final String DIVIDER2 = "--------------------------------------------------------------------------------------";
 
     public static void main(String[] args) {
         boolean checkFileInd = checkFileIndicator();
@@ -649,7 +650,17 @@ public class InteractionMenu {
                 System.out.println("KnowledgeKash Menu > Profile > View Transaction History");
                 System.out.println(DIVIDER);
                 int viewPage = 1;
-                int viewLastRecord = TransactionHistory.findTransactionByUsername(username[0], viewPage);
+                String[] retrievedRecord = TransactionHistory.findTransactionByUsername(username[0], viewPage);
+                header();
+                for (int i = 0; i + 1 < retrievedRecord.length; i += 5) {
+                    if (retrievedRecord[i] == null) {
+                        break;
+                    } else {
+                        tableBody(retrievedRecord[i], retrievedRecord[i + 1], retrievedRecord[i + 2], retrievedRecord[i + 3], retrievedRecord[i + 4]);
+
+                    }
+                }
+                footer();
                 System.out.println("1. Next Page");
                 System.out.print(viewPage == 1 ? "2. Generate Report\n" : "2.Previous page\n");
                 System.out.print(viewPage == 1 ? "0. Back\n" : "3. Generate Report\n");
@@ -663,7 +674,7 @@ public class InteractionMenu {
                             case 1:
                                 int count = (viewPage) * 20 + 1;
 
-                                if (count > viewLastRecord) {
+                                if (count > Integer.parseInt(retrievedRecord[100])) {
                                     System.out.println("This is the last page.");
                                     System.out.print("Enter your choice again: ");
                                 } else {
@@ -1285,7 +1296,17 @@ public class InteractionMenu {
                 } while (errorFlag);
                 while (typePage > 0) {
                     System.out.println("Page: " + typePage);
-                    int TypeLastRecord = TransactionHistory.listTransactionByType(convertedType, typePage);
+                    String[] retrievedRecord = TransactionHistory.listTransactionByType(convertedType, typePage);
+                    header();
+                    for (int i = 0; i + 1 < retrievedRecord.length; i += 5) {
+                        if (retrievedRecord[i] == null) {
+                            break;
+                        } else {
+                            tableBody(retrievedRecord[i], retrievedRecord[i + 1], retrievedRecord[i + 2], retrievedRecord[i + 3], retrievedRecord[i + 4]);
+
+                        }
+                    }
+                    footer();
                     System.out.println("1. Next Page");
                     System.out.print(typePage == 1 ? "0. Back\n" : "2.Previous page\n");
                     System.out.print("Enter your choice: ");
@@ -1297,7 +1318,7 @@ public class InteractionMenu {
                                 case 1:
                                     int count = (typePage) * 20 + 1;
 
-                                    if (count > TypeLastRecord) {
+                                    if (count > Integer.parseInt(retrievedRecord[100])) {
                                         System.out.println("This is the last page.");
                                         errorFlag = true;
                                         System.out.print("Enter your choice again: ");
@@ -1398,7 +1419,17 @@ public class InteractionMenu {
                 }
                 while (dateTypePage > 0) {
                     System.out.println("Page: " + dateTypePage);
-                    int TypeDateLastRecord = TransactionHistory.listTransactionByTypeAndDate(convertedType, startDate, endDate, dateTypePage);
+                    String[] retrievedRecord = TransactionHistory.listTransactionByTypeAndDate(convertedType, startDate, endDate, dateTypePage);
+                    header();
+                    for (int i = 0; i + 1 < retrievedRecord.length; i += 5) {
+                        if (retrievedRecord[i] == null) {
+                            break;
+                        } else {
+                            tableBody(retrievedRecord[i], retrievedRecord[i + 1], retrievedRecord[i + 2], retrievedRecord[i + 3], retrievedRecord[i + 4]);
+
+                        }
+                    }
+                    footer();
                     System.out.println("1. Next Page");
                     System.out.print(dateTypePage == 1 ? "0. Back\n" : "2.Previous page\n");
                     System.out.print("Enter your choice: ");
@@ -1410,7 +1441,7 @@ public class InteractionMenu {
                                 case 1:
                                     int count = (dateTypePage) * 20 + 1;
 
-                                    if (count > TypeDateLastRecord) {
+                                    if (count > Integer.parseInt(retrievedRecord[100])) {
                                         System.out.println("This is the last page.");
                                         errorFlag = true;
                                         System.out.print("Enter your choice again: ");
@@ -1494,11 +1525,21 @@ public class InteractionMenu {
                 }
                 while (datePage > 0) {
                     System.out.println("Page: " + datePage);
-                    int[] tempReturn = TransactionHistory.listTransactionByDate(startDate, endDate, datePage);
-                    int TypeLastRecord = tempReturn[0];
-                    int tempEarn = tempReturn[1];
-                    int tempRedeem = tempReturn[2];
-                    int tempExpired = tempReturn[3];
+                    String[] retrievedRecord = TransactionHistory.listTransactionByDate(startDate, endDate, datePage);
+                    header();
+                    for (int i = 0; i + 1 < retrievedRecord.length; i += 5) {
+                        if (retrievedRecord[i] == null) {
+                            break;
+                        } else {
+                            tableBody(retrievedRecord[i], retrievedRecord[i + 1], retrievedRecord[i + 2], retrievedRecord[i + 3], retrievedRecord[i + 4]);
+
+                        }
+                    }
+                    footer();
+                    int TypeLastRecord = Integer.parseInt(retrievedRecord[100]);
+                    int tempEarn = Integer.parseInt(retrievedRecord[101]);
+                    int tempRedeem = Integer.parseInt(retrievedRecord[102]);
+                    int tempExpired = Integer.parseInt(retrievedRecord[103]);
 
                     System.out.println("1. Next Page");
                     System.out.print(datePage == 1 ? "2. Generate Report\n" : "2.Previous page\n");
@@ -1581,7 +1622,17 @@ public class InteractionMenu {
                     } else {
                         errorFlag = false;
 
-                        int viewLastRecord = TransactionHistory.findTransactionByUsername(usernameInput, viewPage);
+                        String[] retrievedRecord = TransactionHistory.findTransactionByUsername(usernameInput, viewPage);
+                        header();
+                        for (int i = 0; i + 1 < retrievedRecord.length; i += 5) {
+                            if (retrievedRecord[i] == null) {
+                                break;
+                            } else {
+                                tableBody(retrievedRecord[i], retrievedRecord[i + 1], retrievedRecord[i + 2], retrievedRecord[i + 3], retrievedRecord[i + 4]);
+
+                            }
+                        }
+                        footer();
                         System.out.println("1. Next Page");
                         System.out.print(viewPage == 1 ? "2. Generate Report\n" : "2.Previous page\n");
                         System.out.print(viewPage == 1 ? "0. Back\n" : "3. Generate Report\n");
@@ -1595,7 +1646,7 @@ public class InteractionMenu {
                                     case 1:
                                         int count = (viewPage) * 20 + 1;
 
-                                        if (count > viewLastRecord) {
+                                        if (count > Integer.parseInt(retrievedRecord[100])) {
                                             System.out.println("This is the last page.");
                                             System.out.print("Enter your choice again: ");
                                         } else {
@@ -1643,5 +1694,21 @@ public class InteractionMenu {
                 } while (errorFlag);
                 break;
         }
+    }
+
+    public static void header() {
+        System.out.println(DIVIDER2);
+        System.out.printf("| %-15s | %-15s | %-10s | %-11s | %-19s |%n", "Transaction ID", "Username", "Type", "Points", "Date");
+        System.out.println(DIVIDER2);
+
+    }
+
+    public static void footer() {
+        System.out.println(DIVIDER2);
+    }
+
+    public static void tableBody(String field1, String field2, String field3, String field4, String field5) {
+        System.out.printf("| %-15s | %-15s | %-10s | %-11s | %-19s |%n",
+                field1, field2, field3, field4, field5);
     }
 }
