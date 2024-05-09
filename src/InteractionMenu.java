@@ -128,6 +128,7 @@ public class InteractionMenu {
                                             break;
                                         case 4:
                                             errorFlag = false;
+                                            clearScreen();
                                             callCheckUser(scanner);
                                             clearScreen();
                                             break;
@@ -489,7 +490,7 @@ public class InteractionMenu {
 
     public static void callCheckUser(Scanner scanner) {
         System.out.println(DIVIDER);
-        System.out.println("KnowledgeKash Admin > Check User");
+        System.out.println("KnowledgeKash Admin > Manage User");
         System.out.println(DIVIDER);
         int page = 1;
         int lastRecord;
