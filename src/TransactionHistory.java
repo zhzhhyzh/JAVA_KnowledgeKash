@@ -106,14 +106,15 @@ public class TransactionHistory {
         }
     }
 
-    public static int listTransaction(int page) {
+    public static String[] listTransaction(int page) {
         int lineCount = 0;
-
+        int arrayCount = 0;
+        String[] arrayListForTransaction = new String[101];
         int startIndex = (page - 1) * TRANSACTIONS_PER_PAGE + 1;
         int endIndex = startIndex + TRANSACTIONS_PER_PAGE - 1;
-        System.out.println(DIVIDER);
-        System.out.printf("| %-15s | %-15s | %-10s | %-11s | %-19s |%n", "Transaction ID", "Username", "Type", "Points", "Date");
-        System.out.println(DIVIDER);
+//        System.out.println(DIVIDER);
+//        System.out.printf("| %-15s | %-15s | %-10s | %-11s | %-19s |%n", "Transaction ID", "Username", "Type", "Points", "Date");
+//        System.out.println(DIVIDER);
 
         try (BufferedReader reader = new BufferedReader(new FileReader(TRANSACTION_FILE_PATH))) {
             String line;
@@ -122,8 +123,16 @@ public class TransactionHistory {
                 if (lineCount >= startIndex && lineCount <= endIndex) {
                     String[] userData = line.split(",");
                     // Print transaction data in table format
-                    System.out.printf("| %-15s | %-15s | %-10s | %-11s | %-19s |%n",
-                            userData[0], userData[1], userData[2], userData[3], userData[4]);
+                    arrayListForTransaction[arrayCount] = userData[0];
+                        arrayCount++;
+                        arrayListForTransaction[arrayCount] = userData[1];
+                        arrayCount++;
+                        arrayListForTransaction[arrayCount] = userData[2];
+                        arrayCount++;
+                        arrayListForTransaction[arrayCount] = userData[3];
+                        arrayCount++;
+                        arrayListForTransaction[arrayCount] = userData[4];
+                        arrayCount++;
                 } else if (lineCount > endIndex) {
                     break; // Exit loop if reached end index
                 }
@@ -132,8 +141,9 @@ public class TransactionHistory {
             System.err.println("Error reading transaction file: " + e.getMessage());
 
         }
-        System.out.println(DIVIDER);
-        return lineCount;
+       //        System.out.println(DIVIDER);
+        arrayListForTransaction[100] = String.valueOf(lineCount);
+        return arrayListForTransaction;
     }
 
     public static String[] listTransactionByType(char transactionType, int page) {

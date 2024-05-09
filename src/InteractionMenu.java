@@ -1142,7 +1142,17 @@ public class InteractionMenu {
             System.out.println(DIVIDER);
             int page = 1;
             System.out.println("Page: " + page);
-            int lastRecord = TransactionHistory.listTransaction(page);
+            String[] retrievedRecord = TransactionHistory.listTransaction(page);
+            header();
+            for (int i = 0; i + 1 < retrievedRecord.length; i += 5) {
+                if (retrievedRecord[i] == null) {
+                    break;
+                } else {
+                    tableBody(retrievedRecord[i], retrievedRecord[i + 1], retrievedRecord[i + 2], retrievedRecord[i + 3], retrievedRecord[i + 4]);
+
+                }
+            }
+            footer();
             System.out.println("1. Next Page");
             System.out.print(page == 1 ? "2. Find transaction by username\n" : "2.Previous page\n");
             System.out.print(page == 1 ? "3. List by date\n" : "3. Find transaction by username\n");
@@ -1159,7 +1169,7 @@ public class InteractionMenu {
                         case 1:
                             int count = (page) * 20 + 1;
 //                            System.err.println(count + ">>" + lastRecord);
-                            if (count > lastRecord) {
+                            if (count > Integer.parseInt(retrievedRecord[100])) {
                                 System.out.println("This is the last page.");
                                 errorFlag = true;
                                 System.out.print("Enter your choice again: ");
