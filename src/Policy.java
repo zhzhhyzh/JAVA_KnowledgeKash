@@ -11,7 +11,7 @@ public class Policy {
 
     public static int dayCount;
 
-    public static void applyPolicy(String username) {
+    public static void applyPolicy(String username, String fileName) {
         LocalDate currentDate = LocalDate.now();
 
         LocalDate periodTerm = currentDate.minusDays(dayCount);
@@ -34,7 +34,7 @@ public class Policy {
 
                         tempExpired += 10;
                         TransactionHistory th = new TransactionHistory(username, 'P', 10);
-                        th.writeTransactionToFile();
+                        th.writeTransactionToFile(fileName);
 
                         userData[8] = String.valueOf(tempExpired);
                         userData[9] = currentDate.toString();

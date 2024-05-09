@@ -17,6 +17,9 @@ public class InteractionMenu {
     public static final String ANSI_CYAN = "\u001B[36m";
     public static final String ANSI_BOLD = "\u001B[1m";
     public static final String ANSI_RESET_BOLD = "\u001B[21m";
+    private static final int TRANSACTIONS_PER_PAGE = 20;
+    private static final String TRANSACTION_FILE_PATH = "transactionHistory.txt";
+    public static final String QUES_FILE_PATH = "question.txt";
     public static final String DIVIDER = "=====================================================================";
     private static final String DIVIDER2 = "--------------------------------------------------------------------------------------";
 
@@ -233,7 +236,7 @@ public class InteractionMenu {
             System.out.println("Login successful! Welcome, " + tempSave + "!");
 
             Policy.getDayCount();
-            Policy.applyPolicy(username);
+            Policy.applyPolicy(username, TRANSACTION_FILE_PATH);
             return false;
         } else {
             clearScreen();
@@ -600,7 +603,7 @@ public class InteractionMenu {
                             RewardRedemption.redeemProduct(choices);
                             pm.decreasePoints(tempInt);
                             TransactionHistory th = new TransactionHistory(username[0], 'R', tempInt);
-                            th.writeTransactionToFile();
+                            th.writeTransactionToFile(TRANSACTION_FILE_PATH);
                             pm.getClient(username[0]);
                             System.out.println("Current available point(s): " + pm.getAvailablePoints());
                         }
@@ -650,7 +653,7 @@ public class InteractionMenu {
                 System.out.println("KnowledgeKash Menu > Profile > View Transaction History");
                 System.out.println(DIVIDER);
                 int viewPage = 1;
-                String[] retrievedRecord = TransactionHistory.findTransactionByUsername(username[0], viewPage);
+                String[] retrievedRecord = TransactionHistory.findTransactionByUsername(username[0], viewPage, TRANSACTION_FILE_PATH, TRANSACTIONS_PER_PAGE);
                 header();
                 for (int i = 0; i + 1 < retrievedRecord.length; i += 5) {
                     if (retrievedRecord[i] == null) {
@@ -822,7 +825,7 @@ public class InteractionMenu {
         boolean errorFlag = false;
         while (page >= 1) {
             System.out.println("Page: " + page);
-            lastRecord = qr.listQuestion(page);
+            lastRecord = qr.listQuestion(page, QUES_FILE_PATH);
             System.out.println("1. Next Page");
             System.out.print(page == 1 ? "" : "2. Previous Page\n");
             System.out.print(page == 1 ? "2. Create Question\n" : "3. Create Question\n");
@@ -940,17 +943,17 @@ public class InteractionMenu {
                     switch (choice) {
                         case 1:
                             QuestionMcq qs = new QuestionMcq();
-                            qs.createQuestion();
+                            qs.createQuestion(QUES_FILE_PATH);
                             errorFlag = false;
                             break;
                         case 2:
                             QuestionTfq qb = new QuestionTfq();
-                            qb.createQuestion();
+                            qb.createQuestion(QUES_FILE_PATH);
                             errorFlag = false;
                             break;
                         case 3:
                             QuestionEssay qStr = new QuestionEssay();
-                            qStr.createQuestion();
+                            qStr.createQuestion(QUES_FILE_PATH);
                             errorFlag = false;
                             break;
                         case 0:
@@ -991,13 +994,13 @@ public class InteractionMenu {
             } while (errorFlag);
             if (choice > 0 && choice < 101) {
                 QuestionMcq qs = new QuestionMcq();
-                qs.updateQuestion(choice);
+                qs.updateQuestion(choice, QUES_FILE_PATH);
             } else if (choice > 100 && choice < 201) {
                 QuestionTfq qb = new QuestionTfq();
-                qb.updateQuestion(choice);
+                qb.updateQuestion(choice, QUES_FILE_PATH);
             } else if (choice > 200 && choice < 301) {
                 QuestionEssay qStr = new QuestionEssay();
-                qStr.updateQuestion(choice);
+                qStr.updateQuestion(choice, QUES_FILE_PATH);
             }
         } else {
             System.out.println(DIVIDER);
@@ -1022,14 +1025,14 @@ public class InteractionMenu {
             } while (errorFlag);
             if (choice != 0) {
                 QuestionRepository qr = new QuestionRepository();
-                qr.viewQuestion(choice);
+                qr.viewQuestion(choice, QUES_FILE_PATH);
                 System.out.println("Are you sure to delete?");
 
                 System.out.println("Type [1] to confirm");
                 scanner.nextLine();
                 String confirmKey = scanner.nextLine();
                 if (confirmKey.equals("1")) {
-                    qr.deleteQuestion(choice);
+                    qr.deleteQuestion(choice, QUES_FILE_PATH);
                 }
             }
         }
@@ -1056,37 +1059,37 @@ public class InteractionMenu {
                     switch (choice) {
                         case 1:
                             QuestionMcq qs = new QuestionMcq();
-                            int questionCountS = qs.getTotalCount();
+                            int questionCountS = qs.getTotalCount(QUES_FILE_PATH);
                             questionCountS = (int) (Math.random() * questionCountS + 1);
-                            int qSPoint = qs.answerQuestion(questionCountS);
+                            int qSPoint = qs.answerQuestion(questionCountS, QUES_FILE_PATH);
                             System.out.println("Points earned: " + qSPoint);
                             pm.increasePoints(qSPoint);
                             TransactionHistory th1 = new TransactionHistory(username[0], 'E', qSPoint);
-                            th1.writeTransactionToFile();
+                            th1.writeTransactionToFile(TRANSACTION_FILE_PATH);
                             errorFlag = false;
                             break;
                         case 2:
                             QuestionTfq qb = new QuestionTfq();
-                            int questionCountBoo = qb.getTotalCount();
+                            int questionCountBoo = qb.getTotalCount(QUES_FILE_PATH);
                             questionCountBoo = (int) (Math.random() * questionCountBoo + 101);
-                            int qBPoint = qb.answerQuestion(questionCountBoo);
+                            int qBPoint = qb.answerQuestion(questionCountBoo, QUES_FILE_PATH);
                             System.out.println("Points earned: " + qBPoint);
 
                             pm.increasePoints(qBPoint);
                             TransactionHistory th2 = new TransactionHistory(username[0], 'E', qBPoint);
-                            th2.writeTransactionToFile();
+                            th2.writeTransactionToFile(TRANSACTION_FILE_PATH);
                             errorFlag = false;
                             break;
                         case 3:
                             QuestionEssay qStr = new QuestionEssay();
-                            int questionCountStr = qStr.getTotalCount();
+                            int questionCountStr = qStr.getTotalCount(QUES_FILE_PATH);
                             questionCountStr = (int) (Math.random() * questionCountStr + 201);
-                            int qStrPoint = qStr.answerQuestion(questionCountStr);
+                            int qStrPoint = qStr.answerQuestion(questionCountStr, QUES_FILE_PATH);
                             System.out.println("Points earned: " + qStrPoint);
 
                             pm.increasePoints(qStrPoint);
                             TransactionHistory th3 = new TransactionHistory(username[0], 'E', qStrPoint);
-                            th3.writeTransactionToFile();
+                            th3.writeTransactionToFile(TRANSACTION_FILE_PATH);
                             errorFlag = false;
                             break;
                         case 0:
@@ -1142,7 +1145,7 @@ public class InteractionMenu {
             System.out.println(DIVIDER);
             int page = 1;
             System.out.println("Page: " + page);
-            String[] retrievedRecord = TransactionHistory.listTransaction(page);
+            String[] retrievedRecord = TransactionHistory.listTransaction(page, TRANSACTION_FILE_PATH, TRANSACTIONS_PER_PAGE);
             header();
             for (int i = 0; i + 1 < retrievedRecord.length; i += 5) {
                 if (retrievedRecord[i] == null) {
@@ -1306,7 +1309,7 @@ public class InteractionMenu {
                 } while (errorFlag);
                 while (typePage > 0) {
                     System.out.println("Page: " + typePage);
-                    String[] retrievedRecord = TransactionHistory.listTransactionByType(convertedType, typePage);
+                    String[] retrievedRecord = TransactionHistory.listTransactionByType(convertedType, typePage, TRANSACTION_FILE_PATH, TRANSACTIONS_PER_PAGE);
                     header();
                     for (int i = 0; i + 1 < retrievedRecord.length; i += 5) {
                         if (retrievedRecord[i] == null) {
@@ -1429,7 +1432,7 @@ public class InteractionMenu {
                 }
                 while (dateTypePage > 0) {
                     System.out.println("Page: " + dateTypePage);
-                    String[] retrievedRecord = TransactionHistory.listTransactionByTypeAndDate(convertedType, startDate, endDate, dateTypePage);
+                    String[] retrievedRecord = TransactionHistory.listTransactionByTypeAndDate(convertedType, startDate, endDate, dateTypePage, TRANSACTION_FILE_PATH, TRANSACTIONS_PER_PAGE);
                     header();
                     for (int i = 0; i + 1 < retrievedRecord.length; i += 5) {
                         if (retrievedRecord[i] == null) {
@@ -1535,7 +1538,7 @@ public class InteractionMenu {
                 }
                 while (datePage > 0) {
                     System.out.println("Page: " + datePage);
-                    String[] retrievedRecord = TransactionHistory.listTransactionByDate(startDate, endDate, datePage);
+                    String[] retrievedRecord = TransactionHistory.listTransactionByDate(startDate, endDate, datePage, TRANSACTION_FILE_PATH, TRANSACTIONS_PER_PAGE);
                     header();
                     for (int i = 0; i + 1 < retrievedRecord.length; i += 5) {
                         if (retrievedRecord[i] == null) {
@@ -1632,7 +1635,7 @@ public class InteractionMenu {
                     } else {
                         errorFlag = false;
 
-                        String[] retrievedRecord = TransactionHistory.findTransactionByUsername(usernameInput, viewPage);
+                        String[] retrievedRecord = TransactionHistory.findTransactionByUsername(usernameInput, viewPage, TRANSACTION_FILE_PATH, TRANSACTIONS_PER_PAGE);
                         header();
                         for (int i = 0; i + 1 < retrievedRecord.length; i += 5) {
                             if (retrievedRecord[i] == null) {
