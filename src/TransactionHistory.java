@@ -16,8 +16,7 @@ import java.util.List;
 
 public class TransactionHistory {
 
-    private static final int TRANSACTIONS_PER_PAGE = 20;
-    private static final String TRANSACTION_FILE_PATH = "transactionHistory.txt";
+    
     private static final String DIVIDER = "--------------------------------------------------------------------------------------";
 
     private static final String DELIMITER = ",";
@@ -278,7 +277,7 @@ public class TransactionHistory {
                 LocalDate parsedTransactionDate = transactionDate.toLocalDate();
 
                 if ((parsedTransactionDate.isEqual(startDate) || parsedTransactionDate.isAfter(startDate))
-                        && (parsedTransactionDate.isEqual(endDate) || parsedTransactionDate.isBefore(endDate))) {
+                        && (parsedTransactionDate.isEqual(endDate) || parsedTransactionDate.isBefore(endDate)) && transactionType == type) {
 
                     lineCount++;
                     if (lineCount >= startIndex && lineCount <= endIndex) {
