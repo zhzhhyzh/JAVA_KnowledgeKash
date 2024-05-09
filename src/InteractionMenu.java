@@ -225,8 +225,8 @@ public class InteractionMenu {
                 adminFlag[0] = true;
             } else {
                 PassINusername[0] = tempSave;
-
             }
+
             Policy.applyPolicy(username);
 
             clearScreen();
@@ -853,7 +853,7 @@ public class InteractionMenu {
                                 clearScreen();
                                 manageQuestion('A', scanner);
                                 errorFlag = false;
-                                
+
                             }
 
                             break;
@@ -1264,7 +1264,7 @@ public class InteractionMenu {
         switch (listType) {
             case 'T':
                 System.out.println(DIVIDER);
-                System.out.println("KnowledgeKash Admins > Transaction History > List by type");
+                System.out.println("KnowledgeKash Admins > Transaction History > List by transaction type");
                 System.out.println(DIVIDER);
                 int typePage = 1;
                 System.out.print("Enter type[E/R/P] OR [0] for back: ");
@@ -1338,7 +1338,7 @@ public class InteractionMenu {
                 break;
             case 'B':
                 System.out.println(DIVIDER);
-                System.out.println("KnowledgeKash Admins > Transaction History > List by date & type");
+                System.out.println("KnowledgeKash Admins > Transaction History > List by transaction type and date");
                 System.out.println(DIVIDER);
                 System.out.print("Enter type[E/R/P] OR [0] for back: ");
                 do {
@@ -1565,7 +1565,7 @@ public class InteractionMenu {
             case 'V':
                 boolean viewErrorFlag = false;
                 System.out.println(DIVIDER);
-                System.out.println("KnowledgeKash Admins > Transaction History > Find user by detail");
+                System.out.println("KnowledgeKash Admins > Transaction History > Find transaction by username");
                 System.out.println(DIVIDER);
                 do {
                     System.out.println("Enter username OR [0] for back: ");

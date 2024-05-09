@@ -23,7 +23,7 @@ static final String DIVIDER = "-------------------------------------------------
 
         // Print the table header
         System.out.println(DIVIDER);
-        System.out.printf("| %-20s | %-20s | %-20s | %-20s | %-20s | %-20s |%n",
+        System.out.printf("| %-20s | %-20s | %-20s | %-20s | %-20s | %-23s |%n",
                 "Username", "Password", "Name", "Phone Number", "Email", "Available Points");
         System.out.println(DIVIDER);
 
@@ -40,7 +40,7 @@ static final String DIVIDER = "-------------------------------------------------
                     int totalExpired = Integer.parseInt(userData[8]);
                     int availablePoints = totalEarned - totalRedeemed - totalExpired;
                     // Print user details in a table format
-                    System.out.printf("| %-20s | %-20s | %-20s | %-20s | %-20s |  %-20d |%n",
+                    System.out.printf("| %-20s | %-20s | %-20s | %-20s | %-20s |  %-22d |%n",
                             userData[0], userData[1], userData[2], userData[3], userData[4], availablePoints);
                 }
 
