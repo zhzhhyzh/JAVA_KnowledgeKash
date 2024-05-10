@@ -1,7 +1,6 @@
 
 import java.util.Scanner;
 import java.util.InputMismatchException;
-import java.lang.NullPointerException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -225,7 +224,14 @@ public class InteractionMenu {
         System.out.print("Enter your password: ");
         String password = scanner.nextLine();
 
-        String tempSave = Client.login(username, password, USER_FILE_PATH);
+        String tempSave;
+
+        if (username.equals("admin1") || username.equals("admin2") || username.equals("admin3")) {
+            tempSave = Admin.login(username, password, USER_FILE_PATH);
+        } else {
+            tempSave = Client.login(username, password, USER_FILE_PATH);
+
+        }
 
         // Check if login was successful
         if (tempSave != null) {
@@ -1315,7 +1321,7 @@ public class InteractionMenu {
                 } while (errorFlag);
                 while (typePage > 0) {
                     System.out.println("Page: " + typePage);
-                    String[] retrievedRecord = TransactionHistory.listTransactionByType(convertedType, typePage, TRANSACTION_FILE_PATH, TRANSACTIONS_PER_PAGE);
+                    String[] retrievedRecord = TransactionHistory.listTransaction(convertedType, typePage, TRANSACTION_FILE_PATH, TRANSACTIONS_PER_PAGE);
                     header();
                     for (int i = 0; i + 1 < retrievedRecord.length; i += 5) {
                         if (retrievedRecord[i] == null) {
@@ -1438,7 +1444,7 @@ public class InteractionMenu {
                 }
                 while (dateTypePage > 0) {
                     System.out.println("Page: " + dateTypePage);
-                    String[] retrievedRecord = TransactionHistory.listTransactionByTypeAndDate(convertedType, startDate, endDate, dateTypePage, TRANSACTION_FILE_PATH, TRANSACTIONS_PER_PAGE);
+                    String[] retrievedRecord = TransactionHistory.listTransaction(convertedType, startDate, endDate, dateTypePage, TRANSACTION_FILE_PATH, TRANSACTIONS_PER_PAGE);
                     header();
                     for (int i = 0; i + 1 < retrievedRecord.length; i += 5) {
                         if (retrievedRecord[i] == null) {
@@ -1544,7 +1550,7 @@ public class InteractionMenu {
                 }
                 while (datePage > 0) {
                     System.out.println("Page: " + datePage);
-                    String[] retrievedRecord = TransactionHistory.listTransactionByDate(startDate, endDate, datePage, TRANSACTION_FILE_PATH, TRANSACTIONS_PER_PAGE);
+                    String[] retrievedRecord = TransactionHistory.listTransaction(startDate, endDate, datePage, TRANSACTION_FILE_PATH, TRANSACTIONS_PER_PAGE);
                     header();
                     for (int i = 0; i + 1 < retrievedRecord.length; i += 5) {
                         if (retrievedRecord[i] == null) {
