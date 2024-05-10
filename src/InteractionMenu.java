@@ -665,24 +665,24 @@ public class InteractionMenu {
                 System.out.println("KnowledgeKash Menu > Profile > View Transaction History");
                 System.out.println(DIVIDER);
                 int viewPage = 1;
-                String[] retrievedRecord = TransactionHistory.findTransactionByUsername(username[0], viewPage, TRANSACTION_FILE_PATH, TRANSACTIONS_PER_PAGE);
-                header();
-                for (int i = 0; i + 1 < retrievedRecord.length; i += 5) {
-                    if (retrievedRecord[i] == null) {
-                        break;
-                    } else {
-                        tableBody(retrievedRecord[i], retrievedRecord[i + 1], retrievedRecord[i + 2], retrievedRecord[i + 3], retrievedRecord[i + 4]);
-
-                    }
-                }
-                footer();
-                System.out.println("1. Next Page");
-                System.out.print(viewPage == 1 ? "2. Generate Report\n" : "2.Previous page\n");
-                System.out.print(viewPage == 1 ? "0. Back\n" : "3. Generate Report\n");
-                System.out.print(viewPage == 1 ? "" : "0. Back\n");
-                System.out.print("Enter your choice: ");
-
                 do {
+                    String[] retrievedRecord = TransactionHistory.findTransactionByUsername(username[0], viewPage, TRANSACTION_FILE_PATH, TRANSACTIONS_PER_PAGE);
+                    header();
+                    for (int i = 0; i + 1 < retrievedRecord.length; i += 5) {
+                        if (retrievedRecord[i] == null) {
+                            break;
+                        } else {
+                            tableBody(retrievedRecord[i], retrievedRecord[i + 1], retrievedRecord[i + 2], retrievedRecord[i + 3], retrievedRecord[i + 4]);
+
+                        }
+                    }
+                    footer();
+                    System.out.println("1. Next Page");
+                    System.out.print(viewPage == 1 ? "2. Generate Report\n" : "2.Previous page\n");
+                    System.out.print(viewPage == 1 ? "0. Back\n" : "3. Generate Report\n");
+                    System.out.print(viewPage == 1 ? "" : "0. Back\n");
+                    System.out.print("Enter your choice: ");
+
                     try {
                         choice = scanner.nextInt();
                         switch (choice) {
@@ -822,7 +822,7 @@ public class InteractionMenu {
     }
 
     public static void callManageQuestion(Scanner scanner) {
-        QuestionRepository qr = new QuestionRepository();
+        QuestionMcq qr = new QuestionMcq();
         int page = 1;
         clearScreen();
 
@@ -1036,7 +1036,7 @@ public class InteractionMenu {
                 }
             } while (errorFlag);
             if (choice != 0) {
-                QuestionRepository qr = new QuestionRepository();
+                QuestionMcq qr = new QuestionMcq();
                 qr.viewQuestion(choice, QUES_FILE_PATH);
                 System.out.println("Are you sure to delete?");
 

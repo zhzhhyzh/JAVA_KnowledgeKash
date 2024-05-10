@@ -1,5 +1,4 @@
 
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -8,7 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 
-public class QuestionMcq extends QuestionRepository {
+public class QuestionMcq extends QuestionRepository implements QuestionElements {
 
     private static int questionId;
     private static final String DELIMITER = ",";
@@ -46,6 +45,7 @@ public class QuestionMcq extends QuestionRepository {
         return missingNumber;
     }
 
+    @Override
     public int pointDistribute(int questionIndex, String answer) {
         answer = answer.toUpperCase();
         switch (questionIndex) {
@@ -115,6 +115,7 @@ public class QuestionMcq extends QuestionRepository {
 
     }
 
+    @Override
     public int answerQuestion(int questionId, String fileName) {
         Scanner scanner = new Scanner(System.in);
         int pointAccummulate = 0;
@@ -157,6 +158,7 @@ public class QuestionMcq extends QuestionRepository {
         return pointAccummulate;
     }
 
+    @Override
     public void createQuestion(String fileName) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true))) {
             Scanner scanner = new Scanner(System.in);
@@ -191,13 +193,14 @@ public class QuestionMcq extends QuestionRepository {
             System.out.println("\n".repeat(100)); // Print 50 newlines
 
             System.out.println("Question created successfully!");
-                        System.out.println(DIVIDER);
+            System.out.println(DIVIDER);
 
         } catch (IOException e) {
             System.err.println("Error writing to question file: " + e.getMessage());
         }
     }
 
+    @Override
     public boolean updateQuestion(int questionId, String fileName) {
         String[] tempSaveQuestion = new String[20];
         Scanner scanner = new Scanner(System.in);
@@ -254,9 +257,9 @@ public class QuestionMcq extends QuestionRepository {
             }
 
             if (!updated) {
-                 InteractionMenu.clearScreen();
+                InteractionMenu.clearScreen();
 
-            System.out.println("\n".repeat(100)); // Print 50 newlines
+                System.out.println("\n".repeat(100)); // Print 50 newlines
 
                 System.err.println("Question not found.");
                 System.out.println(DIVIDER);
@@ -286,7 +289,7 @@ public class QuestionMcq extends QuestionRepository {
                 System.err.println("Failed to replace the original file with the temporary file.");
                 return false;
             }
- InteractionMenu.clearScreen();
+            InteractionMenu.clearScreen();
 
             System.out.println("\n".repeat(100)); // Print 50 newlines
 
@@ -326,4 +329,5 @@ public class QuestionMcq extends QuestionRepository {
         return lineCount;
 
     }
+
 }

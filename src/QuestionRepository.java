@@ -6,7 +6,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class QuestionRepository {
+public abstract class QuestionRepository {
 
     private static final String DELIMITER = ",";
     static final String DIVIDER = "----------------------------------------------------------------------------------------------------------------------------------------------";
@@ -134,23 +134,29 @@ public class QuestionRepository {
         }
     }
 
-    public int getTotalCount(String fileName) {
-        int lineCount = 0;
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-
-                lineCount++;
-
-            }
-        } catch (IOException e) {
-            System.err.println("Error reading user data from file: " + e.getMessage());
-            return -1;
-        }
-
-        return lineCount;
-
-    }
+//    public int getTotalCount(String fileName) {
+//        int lineCount = 0;
+//
+//        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+//            String line;
+//            while ((line = reader.readLine()) != null) {
+//
+//                lineCount++;
+//
+//            }
+//        } catch (IOException e) {
+//            System.err.println("Error reading user data from file: " + e.getMessage());
+//            return -1;
+//        }
+//
+//        return lineCount;
+//
+//    }
+    
+    public abstract int pointDistribute(int questionIndex, String answer);
+    public abstract int answerQuestion(int questionId, String fileName);
+    public abstract void createQuestion(String fileName);
+    public abstract boolean updateQuestion(int questionId, String fileName);
+    public abstract int getTotalCount(String fileName);
 
 }
