@@ -7,8 +7,6 @@ public class User {
 
     protected String username;
     protected String password;
-
-   
     private static final String DELIMITER = ",";
 
     public User() {
@@ -30,17 +28,19 @@ public class User {
     public String getUsername() {
         return username;
     }
+    
+      public void setUsername(String username) {
+        this.username = username;
+    }
 
     public static String login(String username, String password, String fileName) {
         try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] userData = line.split(DELIMITER);
-                // Ensure line contains at least 2 elements
                 if (userData.length >= 2) {
                     String storedUsername = userData[0];
                     String storedPassword = userData[1];
-                    // Check if the provided username and password match stored credentials
                     if (username.equals(storedUsername) && password.equals(storedPassword)) {
                         return userData[0];
                     }
@@ -50,19 +50,8 @@ public class User {
             System.err.println("Error reading user data from file: " + e.getMessage());
         }
         return null;
-
-        /* Sample Usage:  User loggedInUser = User.login(username, password);
-
-        // Check if login was successful
-        if (loggedInUser != null) {
-            System.out.println("Login successful! Welcome, " + loggedInUser.getUsername() + "!");
-        } else {
-            System.out.println("Login failed. Invalid username or password.");
-        } */
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-    
+  
+
 }

@@ -7,10 +7,36 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public abstract class QuestionRepository {
-
+private int questionId;
+private String[] questions;
+private String[] answers;
     private static final String DELIMITER = ",";
     static final String DIVIDER = "----------------------------------------------------------------------------------------------------------------------------------------------";
     static final String DIVIDER2 = "==============================================================================================================================================";
+
+    public int getQuestionId() {
+        return questionId;
+    }
+
+    public void setQuestionId(int questionId) {
+        this.questionId = questionId;
+    }
+
+    public String[] getQuestions() {
+        return questions;
+    }
+
+    public void setQuestions(String[] questions) {
+        this.questions = questions;
+    }
+
+    public String[] getAnswers() {
+        return answers;
+    }
+
+    public void setAnswers(String[] answers) {
+        this.answers = answers;
+    }
 
     
 

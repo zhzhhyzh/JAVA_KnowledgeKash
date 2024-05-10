@@ -20,7 +20,6 @@ static final String DIVIDER = "-------------------------------------------------
         int endLine = startLine + 19;
         int lineCount = 0;
 
-        // Print the table header
         System.out.println(DIVIDER);
         System.out.printf("| %-20s | %-20s | %-20s | %-20s | %-20s | %-23s |%n",
                 "Username", "Password", "Name", "Phone Number", "Email", "Available Points");
@@ -31,14 +30,12 @@ static final String DIVIDER = "-------------------------------------------------
             while ((line = reader.readLine()) != null) {
                 lineCount++;
                 if (lineCount >= startLine && lineCount <= endLine) {
-                    // Split the line using the delimiter ","
                     String[] userData = line.split(DELIMITER);
                     // Calculate available points
                     int totalEarned = Integer.parseInt(userData[6]);
                     int totalRedeemed = Integer.parseInt(userData[7]);
                     int totalExpired = Integer.parseInt(userData[8]);
                     int availablePoints = totalEarned - totalRedeemed - totalExpired;
-                    // Print user details in a table format
                     System.out.printf("| %-20s | %-20s | %-20s | %-20s | %-20s |  %-22d |%n",
                             userData[0], userData[1], userData[2], userData[3], userData[4], availablePoints);
                 }
