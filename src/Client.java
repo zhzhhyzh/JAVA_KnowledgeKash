@@ -74,14 +74,6 @@ public class Client extends User {
             if (password == null || password.isEmpty()) {
                 errorM += "Password is required.\n";
             }
-//            if (confirmPassword == null || confirmPassword.isEmpty()) {
-//                errorM += "Confirm password is required.\n";
-//            }
-//            if (!password.isEmpty() && !confirmPassword.isEmpty()) {
-//                if (!password.equals(confirmPassword)) {
-//                    errorM += "Password and confirm password do not match.\n";
-//                }
-//            }
             if (!errorM.isEmpty()) {
                 return errorM;
             } else {
