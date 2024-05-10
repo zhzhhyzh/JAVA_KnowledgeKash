@@ -146,7 +146,7 @@ public class TransactionHistory {
         return arrayListForTransaction;
     }
 
-    public static String[] listTransactionByType(char transactionType, int page, String fileName, int pageLimit) {
+    public static String[] listTransaction(char transactionType, int page, String fileName, int pageLimit) {
         int lineCount = 0;
         int arrayCount = 0;
         String[] arrayListForTransaction = new String[101];
@@ -192,7 +192,7 @@ public class TransactionHistory {
         return arrayListForTransaction;
     }
 
-    public static String[] listTransactionByDate(LocalDate startDate, LocalDate endDate, int page, String fileName, int pageLimit) {
+    public static String[] listTransaction(LocalDate startDate, LocalDate endDate, int page, String fileName, int pageLimit) {
         int lineCount = 0;
         int arrayCount = 0;
         String[] arrayListForTransaction = new String[104];
@@ -256,7 +256,7 @@ public class TransactionHistory {
         return arrayListForTransaction;
     }
 
-    public static String[] listTransactionByTypeAndDate(char transactionType, LocalDate startDate, LocalDate endDate, int page, String fileName, int pageLimit) {
+    public static String[] listTransaction(char transactionType, LocalDate startDate, LocalDate endDate, int page, String fileName, int pageLimit) {
         int lineCount = 0;
         int arrayCount = 0;
         String[] arrayListForTransaction = new String[101];
