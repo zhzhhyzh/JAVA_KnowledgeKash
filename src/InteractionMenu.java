@@ -278,6 +278,7 @@ public class InteractionMenu {
             phoneNumber = null;
         }
         clearScreen();
+
         Client registeredClient = Client.register(username, password, confirmPassword, name, phoneNumber, email, USER_FILE_PATH);
         if (registeredClient != null) {
 
@@ -678,7 +679,7 @@ public class InteractionMenu {
                     }
                     footer();
                     System.out.println("1. Next Page");
-                    System.out.print(viewPage == 1 ? "2. Generate Report\n" : "2.Previous page\n");
+                    System.out.print(viewPage == 1 ? "2. Generate Report\n" : "2. Previous page\n");
                     System.out.print(viewPage == 1 ? "0. Back\n" : "3. Generate Report\n");
                     System.out.print(viewPage == 1 ? "" : "0. Back\n");
                     System.out.print("Enter your choice: ");
@@ -1151,11 +1152,12 @@ public class InteractionMenu {
     public static void callTransactionHistory(Scanner scanner) {
         boolean errorFlag = false;
         int choice = 0;
+        int page = 1;
         do {
             System.out.println(DIVIDER);
             System.out.println("KnowledgeKash Admins > Transaction History");
             System.out.println(DIVIDER);
-            int page = 1;
+            
             System.out.println("Page: " + page);
             String[] retrievedRecord = TransactionHistory.listTransaction(page, TRANSACTION_FILE_PATH, TRANSACTIONS_PER_PAGE);
             header();
@@ -1169,7 +1171,7 @@ public class InteractionMenu {
             }
             footer();
             System.out.println("1. Next Page");
-            System.out.print(page == 1 ? "2. Find transaction by username\n" : "2.Previous page\n");
+            System.out.print(page == 1 ? "2. Find transaction by username\n" : "2. Previous page\n");
             System.out.print(page == 1 ? "3. List by date\n" : "3. Find transaction by username\n");
             System.out.print(page == 1 ? "4. List by transaction type\n" : "4. List by date\n");
             System.out.print(page == 1 ? "5. List by transaction type and date\n" : "5. List by transaction type");
@@ -1552,7 +1554,7 @@ public class InteractionMenu {
                     System.out.println("Page: " + datePage);
                     String[] retrievedRecord = TransactionHistory.listTransaction(startDate, endDate, datePage, TRANSACTION_FILE_PATH, TRANSACTIONS_PER_PAGE);
                     header();
-                    for (int i = 0; i + 1 < retrievedRecord.length; i += 5) {
+                    for (int i = 0; i + 1 < 100; i += 5) {
                         if (retrievedRecord[i] == null) {
                             break;
                         } else {
@@ -1567,7 +1569,7 @@ public class InteractionMenu {
                     int tempExpired = Integer.parseInt(retrievedRecord[103]);
 
                     System.out.println("1. Next Page");
-                    System.out.print(datePage == 1 ? "2. Generate Report\n" : "2.Previous page\n");
+                    System.out.print(datePage == 1 ? "2. Generate Report\n" : "2. Previous page\n");
                     System.out.print(datePage == 1 ? "0. Back\n" : "3. Generate Report\n");
                     System.out.print(datePage == 1 ? "" : "0. Back\n");
                     System.out.print("Enter your choice: ");
@@ -1634,11 +1636,12 @@ public class InteractionMenu {
                 System.out.println(DIVIDER);
                 System.out.println("KnowledgeKash Admins > Transaction History > Find transaction by username");
                 System.out.println(DIVIDER);
+                int viewPage = 1;
                 do {
                     System.out.println("Enter username OR [0] for back: ");
                     String usernameInput = scanner.nextLine();
                     Client client = Client.getClient(usernameInput, USER_FILE_PATH);
-                    int viewPage = 1;
+                    
                     if (usernameInput.equals("0")) {
                         errorFlag = false;
                     } else if (client == null) {
@@ -1649,7 +1652,7 @@ public class InteractionMenu {
 
                         String[] retrievedRecord = TransactionHistory.findTransactionByUsername(usernameInput, viewPage, TRANSACTION_FILE_PATH, TRANSACTIONS_PER_PAGE);
                         header();
-                        for (int i = 0; i + 1 < retrievedRecord.length; i += 5) {
+                        for (int i = 0; i + 1 < 100; i += 5) {
                             if (retrievedRecord[i] == null) {
                                 break;
                             } else {
@@ -1659,7 +1662,7 @@ public class InteractionMenu {
                         }
                         footer();
                         System.out.println("1. Next Page");
-                        System.out.print(viewPage == 1 ? "2. Generate Report\n" : "2.Previous page\n");
+                        System.out.print(viewPage == 1 ? "2. Generate Report\n" : "2. Previous page\n");
                         System.out.print(viewPage == 1 ? "0. Back\n" : "3. Generate Report\n");
                         System.out.print(viewPage == 1 ? "" : "0. Back\n");
                         System.out.print("Enter your choice: ");
